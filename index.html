@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="SOLVEX SYSTEM J.B. S.A.S. — Cotizaciones profesionales para servicios técnicos en Estaciones de Servicio.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%236fe5ff'/%3E%3Cstop offset='.48' stop-color='%232f60dd'/%3E%3Cstop offset='1' stop-color='%2307111f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='46' fill='%2307111f' stroke='%236fe5ff' stroke-width='4'/%3E%3Cpath d='M72 28C64 20 34 18 27 35c-8 20 36 13 34 27-2 12-28 11-38 2' fill='none' stroke='url(%23g)' stroke-width='14' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>SOLVEX · Cotizaciones de Servicios Técnicos</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#0d1a31;--panel2:#111f39;--line:#213c64;--line2:#263f66;
+  --text:#eef6ff;--muted:#9db1cc;--muted2:#6f86a6;
+  --cyan:#25c8ef;--blue:#2f60dd;--purple:#9f4dec;--green:#11b985;--green2:#079d70;
+  --orange:#ffa311;--yellow:#ffd01d;--danger:#ff6b6b;--danger2:#c94b4b;
+  --shadow:0 18px 50px rgba(0,0,0,.28);--radius:18px
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:radial-gradient(circle at 20% 0%,#102649 0,transparent 36%),var(--bg);color:var(--text);line-height:1.4}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.wrap{width:min(1120px,calc(100% - 28px));margin:28px auto 54px}
+
+/* ---- Hero ---- */
+.hero{background:linear-gradient(135deg,#111f39,#0d1a31);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.hero-main{display:flex;align-items:center;justify-content:center;gap:14px;padding:26px 20px 6px}
+.brand-logo{width:112px;height:112px;flex:0 0 112px;border-radius:50%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.5));overflow:visible}
+.brand-logo .orbit{transform-origin:100px 100px;animation:logoSpin 28s linear infinite}.brand-logo .pulse{animation:logoPulse 3s ease-in-out infinite}@keyframes logoSpin{to{transform:rotate(360deg)}}@keyframes logoPulse{50%{opacity:.72}}
+.bolt{font-size:40px}
+.hero h1{margin:0;color:var(--cyan);font-size:clamp(23px,4vw,38px);letter-spacing:.02em;text-align:center}
+.hero .brand{margin:2px 0 0;text-align:center;color:var(--yellow);font-weight:800;letter-spacing:.28em;font-size:12px}
+.hero p{margin:0;padding:8px 20px 22px;text-align:center;color:var(--muted);font-style:italic}
+
+/* ---- Sections ---- */
+.section{margin-top:18px;background:rgba(13,26,49,.94);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.section-head{padding:12px 16px;font-weight:900;letter-spacing:.01em;color:#06111c;display:flex;align-items:center;gap:8px}
+.head-slate{background:#8fb3d9}.head-cyan{background:var(--cyan)}.head-purple{background:var(--purple)}
+.head-green{background:var(--green)}.head-orange{background:var(--orange)}.head-yellow{background:var(--yellow)}
+
+/* ---- Datos de cotización ---- */
+.meta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 14px;padding:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.02em;text-transform:uppercase}
+.field input,.field textarea{width:100%;border:1px solid #456387;background:#0b172b;border-radius:10px;padding:11px 12px;outline:none;transition:.15s}
+.field select{width:100%;border:1px solid #456387;background:#0b172b;border-radius:10px;padding:11px 12px;outline:none;transition:.15s}
+.field textarea{resize:vertical;min-height:52px}
+.field input:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(37,200,239,.15)}
+.field.full{grid-column:1 / -1}
+
+/* ---- Horas ---- */
+.hours-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#4a78b8}
+.hour-card{border:0;padding:18px 10px;background:var(--blue);color:#fff;font-weight:850;min-height:82px;transition:.18s ease}
+.hour-card:hover{filter:brightness(1.08)}
+.hour-card.active{background:var(--yellow);color:#121212;box-shadow:inset 0 0 0 3px rgba(255,255,255,.65)}
+.hour-card small{display:block;margin-top:8px;font-size:15px;font-weight:750;opacity:.9}
+.selection{display:grid;grid-template-columns:1.4fr .55fr 1fr 1fr;align-items:stretch;margin:16px;gap:10px}
+.cell{min-height:62px;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;display:flex;align-items:center;padding:10px 14px}
+.cell.label{font-weight:800}
+.cell.value{justify-content:center;background:var(--yellow);color:#151515;font-size:25px;font-weight:950}
+.cell.money{justify-content:flex-end;background:#087252;border-color:#19dca3;font-size:24px;font-weight:950}
+
+/* ---- Ítems ---- */
+.items{padding:16px}
+.items-head{display:grid;grid-template-columns:1.5fr 1fr .75fr 1fr 34px;gap:10px;color:var(--muted);font-size:12px;font-weight:800;padding:0 0 8px;text-transform:uppercase;letter-spacing:.02em}
+.items-head .r{text-align:right}
+.item-row{display:grid;grid-template-columns:1.5fr 1fr .75fr 1fr 34px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #24395a}
+.item-row:last-of-type{border-bottom:0}
+.item-row input{border:1px solid #456387;background:#0b172b;border-radius:10px;padding:10px;outline:none;width:100%;transition:.15s}
+.item-row input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(255,208,29,.15)}
+.item-row .name-in{font-weight:800}
+.item-row .rate-in,.item-row .qty-in{text-align:right;font-variant-numeric:tabular-nums}
+.item-value{text-align:right;font-weight:900;font-variant-numeric:tabular-nums;padding-right:2px}
+.row-del{border:1px solid var(--danger2);background:transparent;color:var(--danger);border-radius:10px;width:34px;height:40px;font-size:18px;line-height:1;transition:.15s}
+.row-del:hover{background:rgba(255,107,107,.14)}
+.row-del:disabled{opacity:.3;cursor:not-allowed}
+.add-item{margin-top:12px;border:1px dashed #4a78b8;background:transparent;color:var(--cyan);border-radius:11px;padding:11px 15px;font-weight:800;width:100%}
+.add-item:hover{background:rgba(37,200,239,.08)}
+.module-tools{display:flex;justify-content:flex-end;padding:0 16px 14px}.module-zero{border:1px solid #49658d;background:transparent;color:var(--muted);border-radius:10px;padding:8px 12px;font-weight:750}.module-zero:hover{color:#fff;background:#17335e}
+.check-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;grid-column:1/-1}.check-card{display:flex;align-items:center;gap:9px;background:#0b172b;border:1px solid #456387;border-radius:10px;padding:11px 12px}.check-card input{width:18px;height:18px;accent-color:var(--green)}
+.extra-hours{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:0 16px 16px}.extra-total{background:#17335e;border:1px solid #315786;border-radius:12px;padding:10px 14px}.extra-total span{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.extra-total strong{display:block;margin-top:5px;color:var(--cyan);font-size:22px}
+.travel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px;padding:16px}.travel-grid .full{grid-column:1/-1}
+.route-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.route-status{color:var(--muted);font-size:13px;min-height:20px}.route-status.ok{color:#6cf2c5}.route-status.err{color:#ff9c9c}
+.travel-result{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.travel-kpi{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:13px}.travel-kpi span{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase}.travel-kpi strong{display:block;margin-top:4px;font-size:20px;color:var(--yellow);font-variant-numeric:tabular-nums}
+
+/* ---- Resumen ---- */
+.summary{padding:9px 16px 0}
+.sum-row{display:flex;justify-content:space-between;gap:18px;padding:10px 4px;border-bottom:1px solid #223b62}
+.sum-row strong{font-variant-numeric:tabular-nums}
+.sum-row.subtotal{font-weight:900;background:#17335e;margin:0 -16px;padding:11px 20px}
+.sum-row.discount strong{color:var(--orange)}
+.disc-inline{display:flex;align-items:center;gap:8px}
+.disc-inline input{width:74px;border:1px solid #456387;background:#0b172b;border-radius:9px;padding:7px 9px;text-align:right;outline:none}
+.disc-inline input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,163,17,.15)}
+.total{margin:0 -16px;background:linear-gradient(135deg,var(--green2),var(--green));display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px;font-size:clamp(22px,4vw,34px);font-weight:950}
+.total strong{font-variant-numeric:tabular-nums}
+
+/* ---- Tarifas base ---- */
+.tariff-grid{padding:14px 16px;display:grid;grid-template-columns:1fr 220px;gap:8px 14px;align-items:center}
+.tariff-grid label{color:#e8eef8}
+.tariff-grid input{border:1px solid #456387;background:#0b172b;border-radius:10px;padding:11px 10px;outline:none;text-align:right}
+.tariff-grid input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(255,208,29,.15)}
+
+/* ---- Acciones ---- */
+.actions{display:flex;flex-wrap:wrap;gap:10px;padding:2px 16px 16px}
+.action{border:1px solid #49658d;background:#142747;color:#fff;border-radius:11px;padding:11px 15px;font-weight:800;transition:.15s}
+.action:hover{background:#1b365f}
+.action.primary{background:var(--orange);border-color:var(--orange);color:#1c1300}
+.action.primary:hover{filter:brightness(1.06)}
+.action.ghost-danger{border-color:var(--danger2);color:var(--danger);background:transparent}
+.action.ghost-danger:hover{background:rgba(255,107,107,.12)}
+.note{color:var(--muted);font-size:13px;padding:0 16px 16px}
+.footer{text-align:center;color:var(--muted2);font-size:12px;margin-top:18px;line-height:1.7}
+
+.invalid{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(255,107,107,.14)!important}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0b2a1f;border:1px solid var(--green);color:#c9ffe9;
+  padding:12px 18px;border-radius:12px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:#2a0f0f;border-color:var(--danger);color:#ffd7d7}
+
+/* ---- Documento de impresión (oculto en pantalla) ---- */
+.print-doc{display:none}
+
+@media(max-width:760px){
+ .meta-grid{grid-template-columns:1fr}
+ .hours-grid{grid-template-columns:repeat(2,1fr)}
+ .selection{grid-template-columns:1fr 1fr}
+ .items-head{display:none}
+ .item-row{grid-template-columns:1fr 1fr;gap:8px}
+ .item-row .name-in{grid-column:1 / -1}
+ .item-value{grid-column:1 / 2;text-align:left}
+ .row-del{grid-column:2 / 3;justify-self:end}
+ .tariff-grid{grid-template-columns:1fr 145px}
+ .travel-grid{grid-template-columns:1fr}.travel-grid .full{grid-column:auto}.travel-result{grid-column:auto;grid-template-columns:1fr}
+ .extra-hours{grid-template-columns:1fr}
+ .check-grid{grid-template-columns:1fr}
+}
+@media(max-width:430px){
+ .wrap{width:min(100% - 16px,1120px);margin-top:8px}
+ .hero-main{padding-top:20px}.bolt{font-size:30px}
+ .section{border-radius:14px}
+ .selection{margin:10px;gap:7px}.cell{padding:8px 10px;min-height:56px;font-size:14px}.cell.money{font-size:18px}.cell.value{font-size:20px}
+ .items{padding:12px}.tariff-grid{padding:12px;grid-template-columns:1fr 125px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.brand-logo .orbit,.brand-logo .pulse{animation:none!important}}
+
+/* ================= IMPRESIÓN: cotización profesional ================= */
+@media print{
+  body{background:#fff;color:#000}
+  .wrap{display:none}
+  .toast{display:none}
+  .print-doc{display:block;width:100%;color:#111;font-size:12px}
+  .p-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #0d1a31;padding-bottom:12px;margin-bottom:16px}
+  .p-brand h2{margin:0;color:#0d1a31;font-size:22px;letter-spacing:.02em}
+  .p-brand .p-sub{margin:2px 0 0;font-weight:700;letter-spacing:.22em;font-size:10px;color:#2f60dd}
+  .p-brand small{color:#555}
+  .p-quote{text-align:right}
+  .p-quote .p-num{font-size:16px;font-weight:800;color:#0d1a31}
+  .p-quote div{font-size:11px;color:#333}
+  .p-client{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;border:1px solid #ccc;border-radius:8px;padding:12px 14px;margin-bottom:16px}
+  .p-client b{color:#0d1a31}
+  table.p-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+  table.p-table th{background:#0d1a31;color:#fff;text-align:left;padding:8px 10px;font-size:11px}
+  table.p-table th.r,table.p-table td.r{text-align:right}
+  table.p-table td{padding:7px 10px;border-bottom:1px solid #ddd;font-variant-numeric:tabular-nums}
+  .p-totals{width:60%;margin-left:auto;font-variant-numeric:tabular-nums}
+  .p-totals .pt-row{display:flex;justify-content:space-between;padding:6px 4px;border-bottom:1px solid #eee}
+  .p-totals .pt-total{background:#0d1a31;color:#fff;font-size:16px;font-weight:800;padding:11px 10px;border-radius:6px;margin-top:6px}
+  .p-notes{margin-top:18px;font-size:11px;color:#333}
+  .p-route{margin:0 0 14px;border:1px solid #ccc;border-radius:8px;padding:10px 12px;font-size:11px}.p-route-title{font-weight:800;color:#0d1a31;margin-bottom:5px}
+  .p-notes .pn-title{font-weight:800;color:#0d1a31;margin-bottom:4px}
+  .p-signs{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:44px}
+  .p-sign-line{border-top:1px solid #333;padding-top:6px;font-size:11px;text-align:center;color:#333}
+  .p-foot{margin-top:26px;border-top:1px solid #ccc;padding-top:8px;font-size:10px;color:#777;text-align:center}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div class="hero-main">
+      <svg class="brand-logo" id="solvexLogo" viewBox="0 0 200 200" role="img" aria-label="Ícono SOLVEX SYSTEM J.B. S.A.S.">
+        <defs><radialGradient id="solvexCore"><stop offset="0" stop-color="#254c82"/><stop offset=".7" stop-color="#0b172b"/><stop offset="1" stop-color="#050b13"/></radialGradient><linearGradient id="solvexMetal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset=".28" stop-color="#7ce8ff"/><stop offset=".55" stop-color="#3975dc"/><stop offset=".78" stop-color="#d9e7f5"/><stop offset="1" stop-color="#426184"/></linearGradient></defs>
+        <circle cx="100" cy="100" r="92" fill="#06101d" stroke="#416b9c" stroke-width="4"/>
+        <g class="orbit" fill="#17365e" stroke="#66dfff" stroke-width="2"><rect x="92" y="1" width="16" height="20" rx="3"/><rect x="92" y="179" width="16" height="20" rx="3"/><rect x="1" y="92" width="20" height="16" rx="3"/><rect x="179" y="92" width="20" height="16" rx="3"/><rect x="20" y="24" width="18" height="14" rx="3" transform="rotate(-45 29 31)"/><rect x="162" y="162" width="18" height="14" rx="3" transform="rotate(-45 171 169)"/><rect x="162" y="24" width="18" height="14" rx="3" transform="rotate(45 171 31)"/><rect x="20" y="162" width="18" height="14" rx="3" transform="rotate(45 29 169)"/></g>
+        <circle class="pulse" cx="100" cy="100" r="75" fill="url(#solvexCore)" stroke="#294f7d" stroke-width="5"/>
+        <path d="M146 58C132 43 79 40 64 67c-18 34 67 22 61 48-5 25-54 23-74 4" fill="none" stroke="#02070c" stroke-width="27" stroke-linecap="round"/>
+        <path d="M146 58C132 43 79 40 64 67c-18 34 67 22 61 48-5 25-54 23-74 4" fill="none" stroke="url(#solvexMetal)" stroke-width="18" stroke-linecap="round"/>
+        <circle cx="151" cy="148" r="6" fill="#25c8ef"/><path d="M151 148h25M176 148l-8-8M176 148l-8 8" stroke="#25c8ef" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+      <div><h1>APP DE SERVICIOS TÉCNICOS</h1><p class="brand">SOLVEX SYSTEM J.B. S.A.S.</p></div>
+    </div>
+    <p>Cotizaciones 2026 · Horas, instalación, capacitación y facturación para Estaciones de Servicio</p>
+  </header>
+
+  <!-- ⓪ DATOS DE LA COTIZACIÓN -->
+  <section class="section">
+    <div class="section-head head-slate">📋 DATOS DE LA COTIZACIÓN</div>
+    <div class="meta-grid">
+      <div class="field"><label for="mNumero">N.º de cotización</label><input id="mNumero" type="text" autocomplete="off"></div>
+      <div class="field"><label for="mFecha">Fecha</label><input id="mFecha" type="date"></div>
+      <div class="field"><label for="mCliente">Cliente / Razón social</label><input id="mCliente" type="text" placeholder="Nombre del cliente" autocomplete="off"></div>
+      <div class="field"><label for="mEds">Estación de servicio (EDS)</label><input id="mEds" type="text" placeholder="Nombre / código de la EDS" autocomplete="off"></div>
+      <div class="field"><label for="mCiudad">Ciudad</label><input id="mCiudad" type="text" placeholder="Ciudad" autocomplete="off"></div>
+      <div class="field"><label for="mTecnico">Técnico responsable</label><input id="mTecnico" type="text" placeholder="Nombre del técnico" autocomplete="off"></div>
+      <div class="field"><label for="mWhatsApp">WhatsApp del cliente (opcional)</label><input id="mWhatsApp" type="tel" placeholder="Ej. 573001234567" autocomplete="tel"></div>
+      <div class="field full"><label for="mNotas">Observaciones (aparecen en la cotización impresa)</label><textarea id="mNotas" placeholder="Condiciones, validez de la oferta, alcance del servicio…"></textarea></div>
+    </div>
+    <div class="extra-hours">
+      <div class="field"><label for="extraHoras">Número de horas adicionales</label><input id="extraHoras" type="number" min="0" step="0.5" inputmode="decimal" value="0"></div>
+      <div class="field"><label for="extraTarifa">Precio por cada hora adicional</label><input id="extraTarifa" type="number" min="0" step="1000" inputmode="numeric" value="0"></div>
+      <div class="extra-total"><span>Valor horas adicionales</span><strong id="extraHoursValue">$0</strong></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head head-cyan">🏢 DATOS DE SOLVEX Y MEDIOS DE PAGO</div>
+    <div class="meta-grid">
+      <div class="field"><label for="eRazon">Razón social</label><input id="eRazon" type="text"></div>
+      <div class="field"><label for="eNit">NIT</label><input id="eNit" type="text"></div>
+      <div class="field"><label for="eRepresentante">Representante legal</label><input id="eRepresentante" type="text"></div>
+      <div class="field"><label for="eCelular">Celular</label><input id="eCelular" type="tel"></div>
+      <div class="field"><label for="eCorreo">Correo electrónico</label><input id="eCorreo" type="email"></div>
+      <div class="field"><label for="eDireccion">Dirección</label><input id="eDireccion" type="text"></div>
+      <div class="field"><label for="eBanco">Banco</label><input id="eBanco" type="text"></div>
+      <div class="field"><label for="eTipoCuenta">Tipo de cuenta</label><input id="eTipoCuenta" type="text"></div>
+      <div class="field"><label for="eCuenta">Número de cuenta</label><input id="eCuenta" type="text"></div>
+      <div class="field"><label for="eCondicion">Condición de pago</label><input id="eCondicion" type="text"></div>
+      <div class="check-grid"><label class="check-card"><input id="pTransferencia" type="checkbox"> Transferencia / consignación bancaria</label><label class="check-card"><input id="pEfectivo" type="checkbox"> Efectivo</label><label class="check-card"><input id="pOtro" type="checkbox"> Otro medio acordado con el cliente</label></div>
+    </div>
+  </section>
+
+  <!-- ① HORAS -->
+  <section class="section">
+    <div class="section-head head-cyan">① HORAS DEL SERVICIO (0 a 4)</div>
+    <div class="hours-grid" id="hoursGrid" aria-label="Selección de horas"></div>
+    <div class="selection">
+      <div class="cell label">▶ Horas seleccionadas</div>
+      <div class="cell value" id="selectedHours">0</div>
+      <div class="cell label">VALOR POR HORAS</div>
+      <div class="cell money" id="hoursValue">$245.000</div>
+    </div>
+    <div class="module-tools"><button class="module-zero" id="zeroHours" type="button">Poner horas en $0</button></div>
+  </section>
+
+  <!-- ② ÍTEMS -->
+  <section class="section">
+    <div class="section-head head-purple">② ÍTEMS DE INSTALACIÓN Y CAPACITACIÓN</div>
+    <div class="items">
+      <div class="items-head">
+        <div>Ítem</div><div class="r">Tarifa unitaria</div><div class="r">Cantidad</div><div class="r">Valor</div><div></div>
+      </div>
+      <div id="itemsBody"></div>
+      <button class="add-item" id="addItem" type="button">＋ Agregar ítem</button>
+    </div>
+    <div class="module-tools"><button class="module-zero" id="zeroItems" type="button">Poner todos los ítems en $0</button></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head head-yellow">③ GASTOS DE VIAJE Y KILOMETRAJE</div>
+    <div class="travel-grid">
+      <div class="field"><label for="vOrigen">Punto de salida</label><input id="vOrigen" type="text" placeholder="Ej. Bogotá, Colombia" autocomplete="off"></div>
+      <div class="field"><label for="vDestino">Lugar o municipio de la visita</label><input id="vDestino" type="text" placeholder="Ej. Tocancipá, Cundinamarca" autocomplete="off"></div>
+      <div class="field"><label for="vTrayecto">Tipo de trayecto</label><select id="vTrayecto"><option value="2">Ida y regreso</option><option value="1">Solo ida</option></select></div>
+      <div class="field"><label for="vTarifaKm">Valor por kilómetro (COP)</label><input id="vTarifaKm" type="number" min="0" step="100"></div>
+      <div class="field"><label for="vKm">Kilómetros del recorrido de ida</label><input id="vKm" type="number" min="0" step="0.1"></div>
+      <div class="field"><label>&nbsp;</label><div class="route-actions"><button class="action primary" id="routeBtn" type="button">📍 Calcular ruta</button><button class="action" id="clearRouteBtn" type="button">Limpiar viaje</button></div></div>
+      <div class="route-status full" id="routeStatus" role="status" aria-live="polite">Escriba el destino y calcularemos la distancia real por carretera.</div>
+      <div class="travel-result"><div class="travel-kpi"><span>Distancia por trayecto</span><strong id="oneWayKm">0 km</strong></div><div class="travel-kpi"><span>Kilómetros facturables</span><strong id="billableKm">0 km</strong></div><div class="travel-kpi"><span>Total gastos de viaje</span><strong id="travelValue">$0</strong></div></div>
+    </div>
+    <div class="module-tools"><button class="module-zero" id="zeroTravel" type="button">Poner gastos de viaje en $0</button></div>
+  </section>
+
+  <!-- ④ RESUMEN -->
+  <section class="section">
+    <div class="section-head head-green">④ RESUMEN DE LA FACTURACIÓN</div>
+    <div class="summary">
+      <div class="sum-row"><span>Servicio por horas</span><strong id="sumHours"></strong></div>
+      <div class="sum-row"><span>Horas adicionales</span><strong id="sumExtraHours"></strong></div>
+      <div class="sum-row"><span>Instalación y capacitación</span><strong id="sumInstall"></strong></div>
+      <div class="sum-row"><span>Gastos de viaje</span><strong id="sumTravel"></strong></div>
+      <div class="sum-row subtotal"><span>SUBTOTAL</span><strong id="sumSubtotal"></strong></div>
+      <div class="sum-row discount">
+        <span class="disc-inline">Descuento <input id="descInput" type="number" min="0" max="100" step="0.5" inputmode="decimal" aria-label="Porcentaje de descuento">%</span>
+        <strong id="sumDiscount"></strong>
+      </div>
+      <div class="sum-row"><span>Base gravable</span><strong id="sumBase"></strong></div>
+      <div class="sum-row"><span id="ivaLabel">IVA 19%</span><strong id="sumIva"></strong></div>
+      <div class="total" aria-live="polite"><span>💰 TOTAL A PAGAR</span><strong id="sumTotal"></strong></div>
+    </div>
+  </section>
+
+  <!-- ⑤ CONFIGURACIÓN CENTRAL DE PRECIOS -->
+  <section class="section tariff-section">
+    <div class="section-head head-orange">⑤ CONFIGURACIÓN GENERAL DE PRECIOS 2026</div>
+    <div class="tariff-grid">
+      <label for="tHora1">Primera hora</label><input id="tHora1" type="number" min="0" step="1000">
+      <label for="tHora2">Segunda hora</label><input id="tHora2" type="number" min="0" step="1000">
+      <label for="tHora3">Tercera hora</label><input id="tHora3" type="number" min="0" step="1000">
+      <label for="tHora4">Cuarta hora (máximo)</label><input id="tHora4" type="number" min="0" step="1000">
+      <label for="tHoraExtra">Hora adicional</label><input id="tHoraExtra" type="number" min="0" step="1000">
+      <label for="tSondas">Sondas</label><input id="tSondas" type="number" min="0" step="1000">
+      <label for="tEquipos">Equipos</label><input id="tEquipos" type="number" min="0" step="1000">
+      <label for="tCapacitacion">Capacitación</label><input id="tCapacitacion" type="number" min="0" step="1000">
+      <label for="tKilometro">Kilómetro a todo costo</label><input id="tKilometro" type="number" min="0" step="100">
+      <label for="tIva">IVA (%)</label><input id="tIva" type="number" min="0" max="100" step="0.01">
+    </div>
+    <div class="actions">
+      <button class="action primary" id="printBtn" type="button">🖨 Imprimir / Guardar cotización (PDF)</button>
+      <button class="action primary" id="pdfBtn" type="button">📥 Generar PDF</button>
+      <button class="action" id="whatsappBtn" type="button">🟢 Generar PDF y enviar por WhatsApp</button>
+      <button class="action" id="copyBtn" type="button">📄 Copiar resumen</button>
+      <button class="action" id="exportBtn" type="button">⬇ Exportar (JSON)</button>
+      <button class="action" id="importBtn" type="button">⬆ Importar (JSON)</button>
+      <button class="action" id="resetTariffs" type="button">Restaurar todos los precios 2026</button>
+      <button class="action ghost-danger" id="resetAll" type="button">Limpiar cotización</button>
+      <input id="fileInput" type="file" accept="application/json,.json" hidden>
+    </div>
+    <div class="note">Los cambios se guardan automáticamente. La cotización funciona sin servidor; el cálculo de ruta requiere Internet. Si no hay conexión, registre los kilómetros manualmente.</div>
+  </section>
+
+  <div class="footer">
+    Aplicación local · Un solo archivo HTML · Datos guardados en el navegador<br>
+    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral
+  </div>
+</main>
+
+<!-- Documento que se renderiza SOLO al imprimir -->
+<div class="print-doc" id="printDoc" aria-hidden="true"></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://unpkg.com/jspdf@4.2.1/dist/jspdf.umd.min.js"></script>
+<script>
+"use strict";
+
+/* ---------------- Configuración base ---------------- */
+const DEFAULT_TARIFAS = Object.freeze({ hora1:98000, hora2:49000, hora3:49000, hora4:49000, horaExtra:49000, sondas:406000, equipos:136000, capacitacion:49000, kilometro:1500, iva:0.19 });
+const DEFAULT_ITEMS = Object.freeze([
+  { nombre:"Sondas",       tarifa:406000, cantidad:0 },
+  { nombre:"Equipos",      tarifa:136000, cantidad:0 },
+  { nombre:"Capacitación", tarifa:49000, cantidad:0 }
+]);
+const DEFAULT_EMPRESA = Object.freeze({razon:"SOLVEX SYSTEM JB S.A.S.",nit:"902051320-2",representante:"Jorge Eduardo Bernal Cristancho",celular:"311 498 0095",correo:"jebernalc12@gmail.com",direccion:"Carrera 20 # 28B Sur - 43, barrio Quiroga, Bogotá D.C., Colombia",banco:"BBVA Colombia",tipoCuenta:"Cuenta de ahorros",cuenta:"0822000200001997",condicion:"Contado",pagos:{transferencia:true,efectivo:true,otro:false}});
+const STORAGE_KEY = "appServiciosTecnicos:v7";
+const PREVIOUS_KEY = "appServiciosTecnicos:v6";
+const LEGACY_KEY  = "appServiciosTecnicos:v5";
+
+const money = new Intl.NumberFormat("es-CO",{ style:"currency", currency:"COP", maximumFractionDigits:0 });
+const pct = r => (r*100).toLocaleString("es-CO",{ maximumFractionDigits:2 });
+
+/* ---------------- Utilidades numéricas ---------------- */
+const num = (v,f=0)=>{ const n=Number(v); return Number.isFinite(n)&&n>=0 ? n : f; };
+const int = (v,f=0)=> Math.max(0, Math.floor(num(v,f)));
+const clamp = (n,min,max)=> Math.min(max, Math.max(min,n));
+const uid = ()=> "it_"+Math.random().toString(36).slice(2,9);
+function mediosPagoTexto(e=state.empresa){return [e.pagos.transferencia?"Transferencia / consignación bancaria":null,e.pagos.efectivo?"Efectivo":null,e.pagos.otro?"Otro medio acordado":null].filter(Boolean).join(" · ")||"Por acordar";}
+function claveTarifaItem(nombre){const n=String(nombre).normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();return n==="sondas"?"sondas":n==="equipos"?"equipos":n==="capacitacion"?"capacitacion":null;}
+function aplicarPreciosConfigurados(s=state){s.items.forEach(it=>{const key=claveTarifaItem(it.nombre);if(key)it.tarifa=s.tarifas[key];});s.tarifaHoraAdicional=s.tarifas.horaExtra;s.viaje.tarifaKm=s.tarifas.kilometro;}
+
+/* ---------------- Estado ---------------- */
+function nuevaCotizacion(){
+  const d = new Date();
+  const seq = int(localStorage.getItem("mym:seq"),0) + 1;
+  return "MYM-"+d.getFullYear()+"-"+String(seq).padStart(4,"0");
+}
+function hoyISO(){ const d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+
+let state = crearEstadoInicial();
+
+function crearEstadoInicial(){
+  return {
+    meta:{ numero:nuevaCotizacion(), fecha:hoyISO(), cliente:"", eds:"", ciudad:"", tecnico:"", whatsapp:"", notas:"" },
+    empresa:{...DEFAULT_EMPRESA,pagos:{...DEFAULT_EMPRESA.pagos}},
+    horas:0,
+    horasAdicionales:0,
+    tarifaHoraAdicional:DEFAULT_TARIFAS.horaExtra,
+    items: DEFAULT_ITEMS.map(it=>({ id:uid(), ...it })),
+    descuento:0,
+    viaje:{ origen:"Bogotá, Colombia", destino:"", trayecto:2, kmIda:0, kmFacturables:0, tarifaKm:DEFAULT_TARIFAS.kilometro, fuente:"manual" },
+    tarifas:{ ...DEFAULT_TARIFAS }
+  };
+}
+
+/* ---------------- Motor de cálculo (puro) ---------------- */
+function calcularValorHoras(horas, t){
+  const h = clamp(int(horas,0),0,4);
+  return [t.hora1,t.hora2,t.hora3,t.hora4].slice(0,h).reduce((a,b)=>a+num(b),0);
+}
+function calcularFactura(s){
+  const valorHoras = calcularValorHoras(s.horas, s.tarifas);
+  const valorHorasAdicionales = num(s.horasAdicionales) * num(s.tarifaHoraAdicional);
+  const valorItems = s.items.reduce((a,it)=> a + num(it.tarifa)*int(it.cantidad), 0);
+  const valorViaje = num(s.viaje?.kmFacturables) * num(s.viaje?.tarifaKm,1500);
+  const subtotal   = valorHoras + valorHorasAdicionales + valorItems + valorViaje;
+  const descRate   = clamp(num(s.descuento),0,100)/100;
+  const descuento  = subtotal * descRate;
+  const base       = subtotal - descuento;
+  const ivaRate    = clamp(num(s.tarifas.iva),0,1);
+  const iva        = base * ivaRate;
+  const total      = base + iva;
+  return { valorHoras, valorHorasAdicionales, valorItems, valorViaje, subtotal, descuento, base, ivaRate, iva, total };
+}
+
+/* ---------------- Persistencia ---------------- */
+function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(_){} }
+
+function sanitizarEstado(x){
+  if(!x || typeof x!=="object") return null;
+  const s = crearEstadoInicial();
+  s.horas = clamp(int(x.horas,0),0,4);
+  s.horasAdicionales=num(x.horasAdicionales,0);s.tarifaHoraAdicional=num(x.tarifaHoraAdicional,DEFAULT_TARIFAS.horaExtra);
+  s.descuento = clamp(num(x.descuento,0),0,100);
+  if(x.empresa&&typeof x.empresa==="object"){
+    const e=x.empresa;s.empresa={razon:String(e.razon??DEFAULT_EMPRESA.razon).slice(0,120),nit:String(e.nit??DEFAULT_EMPRESA.nit).slice(0,30),representante:String(e.representante??DEFAULT_EMPRESA.representante).slice(0,120),celular:String(e.celular??DEFAULT_EMPRESA.celular).slice(0,30),correo:String(e.correo??DEFAULT_EMPRESA.correo).slice(0,120),direccion:String(e.direccion??DEFAULT_EMPRESA.direccion).slice(0,180),banco:String(e.banco??DEFAULT_EMPRESA.banco).slice(0,80),tipoCuenta:String(e.tipoCuenta??DEFAULT_EMPRESA.tipoCuenta).slice(0,60),cuenta:String(e.cuenta??DEFAULT_EMPRESA.cuenta).slice(0,40),condicion:String(e.condicion??DEFAULT_EMPRESA.condicion).slice(0,60),pagos:{transferencia:e.pagos?.transferencia!==false,efectivo:e.pagos?.efectivo!==false,otro:e.pagos?.otro===true}};
+  }
+  if(x.viaje && typeof x.viaje==="object") s.viaje={origen:String(x.viaje.origen??"Bogotá, Colombia").slice(0,160),destino:String(x.viaje.destino??"").slice(0,160),trayecto:Number(x.viaje.trayecto)===1?1:2,kmIda:num(x.viaje.kmIda,0),kmFacturables:num(x.viaje.kmFacturables,0),tarifaKm:num(x.viaje.tarifaKm,DEFAULT_TARIFAS.kilometro),fuente:String(x.viaje.fuente??"manual").slice(0,30)};
+  if(x.meta && typeof x.meta==="object"){
+    const m=x.meta;
+    s.meta = {
+      numero: String(m.numero ?? s.meta.numero).slice(0,40),
+      fecha:  /^\d{4}-\d{2}-\d{2}$/.test(m.fecha) ? m.fecha : s.meta.fecha,
+      cliente:String(m.cliente ?? "").slice(0,120),
+      eds:    String(m.eds ?? "").slice(0,120),
+      ciudad: String(m.ciudad ?? "").slice(0,80),
+      tecnico:String(m.tecnico ?? "").slice(0,120),
+      whatsapp:String(m.whatsapp ?? "").replace(/[^\d+]/g,"").slice(0,20),
+      notas:  String(m.notas ?? "").slice(0,600)
+    };
+  }
+  if(Array.isArray(x.items) && x.items.length){
+    s.items = x.items.slice(0,40).map(it=>({
+      id: uid(),
+      nombre: String(it?.nombre ?? "Ítem").slice(0,80),
+      tarifa: num(it?.tarifa,0),
+      cantidad: int(it?.cantidad,0)
+    }));
+  }
+  if(x.tarifas && typeof x.tarifas==="object"){
+    const t=x.tarifas;
+    s.tarifas = {
+      hora1:num(t.hora1,DEFAULT_TARIFAS.hora1),
+      hora2:num(t.hora2,DEFAULT_TARIFAS.hora2),
+      hora3:num(t.hora3,DEFAULT_TARIFAS.hora3),
+      hora4:num(t.hora4,DEFAULT_TARIFAS.hora4),
+      horaExtra:num(t.horaExtra,DEFAULT_TARIFAS.horaExtra),sondas:num(t.sondas,DEFAULT_TARIFAS.sondas),equipos:num(t.equipos,DEFAULT_TARIFAS.equipos),capacitacion:num(t.capacitacion,DEFAULT_TARIFAS.capacitacion),kilometro:num(t.kilometro,DEFAULT_TARIFAS.kilometro),
+      iva:clamp(num(t.iva,DEFAULT_TARIFAS.iva),0,1)
+    };
+  }
+  return s;
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(PREVIOUS_KEY);
+    if(raw){
+      const s=sanitizarEstado(JSON.parse(raw));
+      if(s){
+        /* Corrige cotizaciones de la versión anterior que guardaron las cuatro tarifas en cero. */
+        if([s.tarifas.hora1,s.tarifas.hora2,s.tarifas.hora3,s.tarifas.hora4].every(v=>num(v)===0)){
+          s.tarifas={...s.tarifas,hora1:DEFAULT_TARIFAS.hora1,hora2:DEFAULT_TARIFAS.hora2,hora3:DEFAULT_TARIFAS.hora3,hora4:DEFAULT_TARIFAS.hora4};
+        }
+        /* Recupera los precios estándar eliminados accidentalmente en versiones anteriores. */
+        s.items.forEach(it=>{const key=claveTarifaItem(it.nombre);if(key&&num(it.tarifa)===0)it.tarifa=s.tarifas[key];});
+        if(num(s.tarifaHoraAdicional)===0)s.tarifaHoraAdicional=s.tarifas.horaExtra;
+        if(num(s.viaje.tarifaKm)===0)s.viaje.tarifaKm=s.tarifas.kilometro;
+        if(/^CR 5\s*#?\s*78[- ]75/i.test(s.empresa.direccion))s.empresa.direccion=DEFAULT_EMPRESA.direccion;
+        state=s; return;
+      }
+    }
+  }catch(_){}
+  // Migración desde v1 (estructura antigua con cantidades fijas)
+  try{
+    const legacy = localStorage.getItem(LEGACY_KEY);
+    if(legacy){
+      const x = JSON.parse(legacy);
+      state = crearEstadoInicial();
+      state.horas = clamp(int(x?.horas,0),0,4);
+      state.items = [
+        { id:uid(), nombre:"Sondas",       tarifa:num(x?.tarifas?.sondas,DEFAULT_ITEMS[0].tarifa),       cantidad:int(x?.cantidades?.sondas,0) },
+        { id:uid(), nombre:"Equipos",      tarifa:num(x?.tarifas?.equipos,DEFAULT_ITEMS[1].tarifa),      cantidad:int(x?.cantidades?.equipos,0) },
+        { id:uid(), nombre:"Capacitación", tarifa:num(x?.tarifas?.capacitacion,DEFAULT_ITEMS[2].tarifa), cantidad:int(x?.cantidades?.capacitacion,0) }
+      ];
+      state.tarifas = {
+        hora1:num(x?.tarifas?.hora1,DEFAULT_TARIFAS.hora1),
+        hora2:num(x?.tarifas?.hora2,DEFAULT_TARIFAS.hora2),
+        hora3:num(x?.tarifas?.hora3,DEFAULT_TARIFAS.hora3),
+        hora4:num(x?.tarifas?.hora4,DEFAULT_TARIFAS.hora4),
+        iva:clamp(num(x?.tarifas?.iva,DEFAULT_TARIFAS.iva),0,1)
+      };
+    }
+  }catch(_){}
+}
+
+/* ---------------- Atajos DOM ---------------- */
+const $ = id => document.getElementById(id);
+
+/* ---------------- Render: metadatos ---------------- */
+function syncMeta(){
+  $("mNumero").value = state.meta.numero;
+  $("mFecha").value  = state.meta.fecha;
+  $("mCliente").value= state.meta.cliente;
+  $("mEds").value    = state.meta.eds;
+  $("mCiudad").value = state.meta.ciudad;
+  $("mTecnico").value= state.meta.tecnico;
+  $("mWhatsApp").value=state.meta.whatsapp;
+  $("mNotas").value  = state.meta.notas;
+}
+function wireMeta(){
+  const map = { mNumero:"numero", mFecha:"fecha", mCliente:"cliente", mEds:"eds", mCiudad:"ciudad", mTecnico:"tecnico", mWhatsApp:"whatsapp", mNotas:"notas" };
+  Object.entries(map).forEach(([elId,key])=>{
+    $(elId).addEventListener("input", e=>{ state.meta[key]=e.target.value; saveState(); });
+  });
+}
+function syncEmpresa(){
+  const e=state.empresa,map={eRazon:"razon",eNit:"nit",eRepresentante:"representante",eCelular:"celular",eCorreo:"correo",eDireccion:"direccion",eBanco:"banco",eTipoCuenta:"tipoCuenta",eCuenta:"cuenta",eCondicion:"condicion"};
+  Object.entries(map).forEach(([id,key])=>{$(id).value=e[key]||"";});$("pTransferencia").checked=!!e.pagos.transferencia;$("pEfectivo").checked=!!e.pagos.efectivo;$("pOtro").checked=!!e.pagos.otro;
+}
+function wireEmpresa(){
+  const map={eRazon:"razon",eNit:"nit",eRepresentante:"representante",eCelular:"celular",eCorreo:"correo",eDireccion:"direccion",eBanco:"banco",eTipoCuenta:"tipoCuenta",eCuenta:"cuenta",eCondicion:"condicion"};
+  Object.entries(map).forEach(([id,key])=>$(id).addEventListener("input",e=>{state.empresa[key]=e.target.value;saveState();}));[["pTransferencia","transferencia"],["pEfectivo","efectivo"],["pOtro","otro"]].forEach(([id,key])=>$(id).addEventListener("change",e=>{state.empresa.pagos[key]=e.target.checked;saveState();}));
+}
+
+/* ---------------- Render: horas ---------------- */
+function buildHourButtons(){
+  const grid=$("hoursGrid"); grid.textContent="";
+  for(let h=0;h<=4;h++){
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="hour-card"+(state.horas===h?" active":"");
+    b.setAttribute("aria-pressed", state.horas===h ? "true":"false");
+    b.innerHTML=`${h} ${h===1?"HORA":"HORAS"}<small>${money.format(calcularValorHoras(h,state.tarifas))}</small>`;
+    b.addEventListener("click",()=>{ state.horas=h; render(); });
+    grid.appendChild(b);
+  }
+}
+
+/* ---------------- Render: ítems ---------------- */
+function buildItems(){
+  const body=$("itemsBody"); body.textContent="";
+  state.items.forEach(it=>{
+    const row=document.createElement("div"); row.className="item-row";
+    const valor = num(it.tarifa)*int(it.cantidad);
+
+    const name=document.createElement("input");
+    name.className="name-in"; name.type="text"; name.value=it.nombre;
+    name.setAttribute("aria-label","Nombre del ítem");
+    name.addEventListener("input",()=>{ it.nombre=name.value; saveState(); });
+
+    const rate=document.createElement("input");
+    rate.className="rate-in"; rate.type="number"; rate.min="0"; rate.step="1000"; rate.value=it.tarifa;
+    rate.setAttribute("aria-label","Tarifa unitaria");
+    wireLive(rate, v=>{it.tarifa=v;const key=claveTarifaItem(it.nombre);if(key)state.tarifas[key]=v;}, { min:0 });
+
+    const qty=document.createElement("input");
+    qty.className="qty-in"; qty.type="number"; qty.min="0"; qty.step="1"; qty.inputMode="numeric"; qty.value=it.cantidad;
+    qty.setAttribute("aria-label","Cantidad");
+    wireLive(qty, v=>{ it.cantidad=v; }, { integer:true, min:0 });
+
+    const val=document.createElement("div");
+    val.className="item-value"; val.textContent=money.format(valor);
+
+    const del=document.createElement("button");
+    del.className="row-del"; del.type="button"; del.textContent="×"; del.title="Quitar ítem";
+    del.disabled = state.items.length<=1;
+    del.addEventListener("click",()=>{ state.items=state.items.filter(x=>x.id!==it.id); render(); });
+
+    row.append(name,rate,qty,val,del);
+    body.appendChild(row);
+  });
+}
+
+/* ---------------- Render: tarifas ---------------- */
+function syncTarifas(){
+  $("tHora1").value=state.tarifas.hora1;
+  $("tHora2").value=state.tarifas.hora2;
+  $("tHora3").value=state.tarifas.hora3;
+  $("tHora4").value=state.tarifas.hora4;
+  $("tHoraExtra").value=state.tarifas.horaExtra;$("tSondas").value=state.tarifas.sondas;$("tEquipos").value=state.tarifas.equipos;$("tCapacitacion").value=state.tarifas.capacitacion;$("tKilometro").value=state.tarifas.kilometro;
+  $("tIva").value=(state.tarifas.iva*100).toFixed(2).replace(/\.00$/,"");
+  $("descInput").value=state.descuento;
+}
+function syncViaje(){
+  $("vOrigen").value=state.viaje.origen; $("vDestino").value=state.viaje.destino; $("vTrayecto").value=String(state.viaje.trayecto);
+  $("vTarifaKm").value=state.viaje.tarifaKm; $("vKm").value=state.viaje.kmIda||0;
+}
+function syncHorasExtras(){$("extraHoras").value=state.horasAdicionales||0;$("extraTarifa").value=state.tarifaHoraAdicional||0;}
+
+/* ---------------- Render principal ---------------- */
+function render(){
+  const r=calcularFactura(state);
+  buildHourButtons();
+  buildItems();
+  $("selectedHours").textContent=state.horas;
+  $("hoursValue").textContent=money.format(r.valorHoras);
+  $("sumHours").textContent=money.format(r.valorHoras);
+  $("sumExtraHours").textContent=money.format(r.valorHorasAdicionales);
+  $("extraHoursValue").textContent=money.format(r.valorHorasAdicionales);
+  $("sumInstall").textContent=money.format(r.valorItems);
+  $("sumTravel").textContent=money.format(r.valorViaje);
+  $("oneWayKm").textContent=`${num(state.viaje.kmIda).toLocaleString("es-CO",{maximumFractionDigits:1})} km`;
+  $("billableKm").textContent=`${num(state.viaje.kmFacturables).toLocaleString("es-CO",{maximumFractionDigits:1})} km`;
+  $("travelValue").textContent=money.format(r.valorViaje);
+  $("sumSubtotal").textContent=money.format(r.subtotal);
+  $("sumDiscount").textContent="− "+money.format(r.descuento);
+  $("sumBase").textContent=money.format(r.base);
+  $("ivaLabel").textContent=`IVA ${pct(r.ivaRate)}%`;
+  $("sumIva").textContent=money.format(r.iva);
+  $("sumTotal").textContent=money.format(r.total);
+  saveState();
+}
+
+/* ---------------- Validación en vivo ---------------- */
+function wireLive(el, onValid, { integer=false, min=0, max=Infinity }={}){
+  el.addEventListener("input",()=>{
+    const n=Number(el.value);
+    const valid=el.value!=="" && Number.isFinite(n) && n>=min && n<=max && (integer?Number.isInteger(n):true);
+    el.classList.toggle("invalid",!valid);
+    if(valid){ onValid(n); render(); syncTarifas(); }
+  });
+  el.addEventListener("blur",()=>{ el.classList.remove("invalid"); render(); });
+}
+
+/* Tarifas base + descuento */
+["tHora1","tHora2","tHora3","tHora4"].forEach((id,i)=>{
+  wireLive($(id), v=>{ state.tarifas["hora"+(i+1)]=v; }, { min:0 });
+});
+wireLive($("tIva"), v=>{ state.tarifas.iva=v/100; }, { min:0, max:100 });
+wireLive($("tHoraExtra"),v=>{state.tarifas.horaExtra=v;state.tarifaHoraAdicional=v;syncHorasExtras();},{min:0});
+[["tSondas","sondas"],["tEquipos","equipos"],["tCapacitacion","capacitacion"]].forEach(([id,key])=>wireLive($(id),v=>{state.tarifas[key]=v;state.items.forEach(it=>{if(claveTarifaItem(it.nombre)===key)it.tarifa=v;});},{min:0}));
+wireLive($("tKilometro"),v=>{state.tarifas.kilometro=v;state.viaje.tarifaKm=v;syncViaje();},{min:0});
+wireLive($("descInput"), v=>{ state.descuento=v; }, { min:0, max:100 });
+wireLive($("extraHoras"),v=>{state.horasAdicionales=v;},{min:0});
+wireLive($("extraTarifa"),v=>{state.tarifaHoraAdicional=v;state.tarifas.horaExtra=v;},{min:0});
+
+/* ---------------- Ruta y gastos de viaje ---------------- */
+function setRouteStatus(msg,kind=""){const el=$("routeStatus");el.textContent=msg;el.className="route-status full"+(kind?" "+kind:"");}
+async function geocodificar(lugar){
+  const url=`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=co&q=${encodeURIComponent(lugar)}`;
+  const res=await fetch(url,{headers:{"Accept-Language":"es"}});if(!res.ok)throw new Error("No fue posible consultar el lugar");
+  const data=await res.json();if(!data.length)throw new Error(`No encontramos: ${lugar}`);return{lat:Number(data[0].lat),lon:Number(data[0].lon),nombre:data[0].display_name};
+}
+async function calcularRuta(){
+  const origen=state.viaje.origen.trim(),destino=state.viaje.destino.trim();if(!origen||!destino){setRouteStatus("Complete el punto de salida y el destino.","err");return;}
+  $("routeBtn").disabled=true;setRouteStatus("Consultando ubicaciones y calculando la ruta por carretera…");
+  try{
+    const a=await geocodificar(origen);await new Promise(r=>setTimeout(r,1050));const b=await geocodificar(destino);
+    const rr=await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lon},${a.lat};${b.lon},${b.lat}?overview=false&steps=false`);if(!rr.ok)throw new Error("No fue posible calcular la ruta");const data=await rr.json();if(data.code!=="Ok"||!data.routes?.length)throw new Error("No se encontró una ruta terrestre");
+    const ida=Math.round(data.routes[0].distance/100)/10;state.viaje.kmIda=ida;state.viaje.kmFacturables=Math.round(ida*state.viaje.trayecto*10)/10;state.viaje.fuente="OpenStreetMap/OSRM";syncViaje();render();setRouteStatus(`Ruta calculada: ${a.nombre} → ${b.nombre}. Puede ajustar los kilómetros.`,"ok");
+  }catch(err){setRouteStatus(`${err.message}. Ingrese los kilómetros manualmente.`,"err");}finally{$("routeBtn").disabled=false;}
+}
+$("vOrigen").addEventListener("input",e=>{state.viaje.origen=e.target.value;saveState();});
+$("vDestino").addEventListener("input",e=>{state.viaje.destino=e.target.value;saveState();setRouteStatus("Destino listo. Pulse “Calcular ruta” o Enter.");});
+$("vDestino").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();calcularRuta();}});
+$("vTrayecto").addEventListener("change",e=>{state.viaje.trayecto=Number(e.target.value);state.viaje.kmFacturables=Math.round(state.viaje.kmIda*state.viaje.trayecto*10)/10;syncViaje();render();});
+wireLive($("vTarifaKm"),v=>{state.viaje.tarifaKm=v;state.tarifas.kilometro=v;},{min:0});wireLive($("vKm"),v=>{state.viaje.kmIda=v;state.viaje.kmFacturables=Math.round(v*state.viaje.trayecto*10)/10;state.viaje.fuente="manual";syncViaje();},{min:0});
+$("routeBtn").addEventListener("click",calcularRuta);$("clearRouteBtn").addEventListener("click",()=>{state.viaje={origen:state.viaje.origen,destino:"",trayecto:2,kmIda:0,kmFacturables:0,tarifaKm:state.tarifas.kilometro,fuente:"manual"};syncViaje();render();setRouteStatus("Datos de viaje limpiados.","ok");});
+
+/* ---------------- Acciones ---------------- */
+$("addItem").addEventListener("click",()=>{
+  state.items.push({ id:uid(), nombre:"Nuevo ítem", tarifa:0, cantidad:1 });
+  render();
+});
+
+$("zeroHours").addEventListener("click",()=>{state.horas=0;state.horasAdicionales=0;syncHorasExtras();render();toast("Módulo de horas en $0");});
+$("zeroItems").addEventListener("click",()=>{state.items.forEach(it=>{it.cantidad=0;});render();toast("Cantidades de instalación y capacitación en 0");});
+$("zeroTravel").addEventListener("click",()=>{state.viaje.kmIda=0;state.viaje.kmFacturables=0;state.viaje.fuente="manual";syncViaje();render();setRouteStatus("Gastos de viaje en $0. El origen y destino se conservaron.","ok");toast("Módulo de viaje en $0");});
+
+$("resetTariffs").addEventListener("click",()=>{
+  state.tarifas={ ...DEFAULT_TARIFAS };
+  aplicarPreciosConfigurados();syncTarifas();syncViaje();syncHorasExtras();render();toast("Todos los precios 2026 restaurados");
+});
+
+$("resetAll").addEventListener("click",()=>{
+  const seq = int(localStorage.getItem("mym:seq"),0)+1;
+  const empresaGuardada=JSON.parse(JSON.stringify(state.empresa)),tarifasGuardadas={...state.tarifas};
+  localStorage.setItem("mym:seq", String(seq-1));
+  state = crearEstadoInicial();
+  state.empresa=empresaGuardada;state.tarifas=tarifasGuardadas;aplicarPreciosConfigurados();
+  localStorage.setItem("mym:seq", String(seq));
+  syncMeta();syncEmpresa();syncTarifas();syncViaje();syncHorasExtras();render();toast("Cotización nueva lista");
+});
+
+$("printBtn").addEventListener("click",()=>{ renderPrintDoc(); window.print(); });
+
+$("copyBtn").addEventListener("click", async ()=>{
+  const r=calcularFactura(state);
+  const lines=[
+    `${state.empresa.razon} — NIT ${state.empresa.nit}`,
+    `Contacto: ${state.empresa.celular} · ${state.empresa.correo}`,
+    `Cotización: ${state.meta.numero}   Fecha: ${state.meta.fecha}`,
+    state.meta.cliente ? `Cliente: ${state.meta.cliente}` : null,
+    state.meta.eds ? `EDS: ${state.meta.eds}` : null,
+    state.meta.ciudad ? `Ciudad: ${state.meta.ciudad}` : null,
+    "",
+    `Servicio por horas (${state.horas}): ${money.format(r.valorHoras)}`,
+    r.valorHorasAdicionales>0 ? `Horas adicionales (${state.horasAdicionales} × ${money.format(state.tarifaHoraAdicional)}): ${money.format(r.valorHorasAdicionales)}` : null,
+    ...state.items.filter(it=>int(it.cantidad)>0).map(it=>
+      `${it.nombre} x${int(it.cantidad)} @ ${money.format(num(it.tarifa))} = ${money.format(num(it.tarifa)*int(it.cantidad))}`),
+    r.valorViaje>0 ? `Viaje a ${state.viaje.destino}: ${state.viaje.kmFacturables} km × ${money.format(state.viaje.tarifaKm)} = ${money.format(r.valorViaje)}` : null,
+    "",
+    `Subtotal: ${money.format(r.subtotal)}`,
+    r.descuento>0 ? `Descuento (${pct(state.descuento/100)}%): − ${money.format(r.descuento)}` : null,
+    `Base gravable: ${money.format(r.base)}`,
+    `IVA ${pct(r.ivaRate)}%: ${money.format(r.iva)}`,
+    `TOTAL: ${money.format(r.total)}`
+    ,`Pago: ${mediosPagoTexto()} · ${state.empresa.banco} ${state.empresa.tipoCuenta} ${state.empresa.cuenta} · ${state.empresa.condicion}`
+  ].filter(Boolean);
+  const text=lines.join("\n");
+  try{
+    await navigator.clipboard.writeText(text);
+    toast("Resumen copiado");
+  }catch(_){ window.prompt("Copie el resumen:", text); }
+});
+
+$("exportBtn").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const nombre=(state.meta.numero||"cotizacion").replace(/[^\w\-]+/g,"_");
+  a.href=url; a.download=nombre+".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  toast("Cotización exportada");
+});
+
+$("importBtn").addEventListener("click",()=> $("fileInput").click());
+$("fileInput").addEventListener("change", e=>{
+  const file=e.target.files?.[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const s=sanitizarEstado(JSON.parse(reader.result));
+      if(!s){ toast("Archivo no válido","err"); return; }
+      state=s;syncMeta();syncEmpresa();syncTarifas();syncViaje();syncHorasExtras();render();toast("Cotización importada");
+    }catch(_){ toast("No se pudo leer el archivo","err"); }
+    finally{ e.target.value=""; }
+  };
+  reader.onerror=()=>{ toast("Error al leer el archivo","err"); e.target.value=""; };
+  reader.readAsText(file);
+});
+
+/* ---------------- Toast ---------------- */
+let toastTimer;
+function toast(msg, kind=""){
+  const t=$("toast"); t.textContent=msg;
+  t.className="toast show"+(kind==="err"?" err":"");
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ t.className="toast"+(kind==="err"?" err":""); }, kind==="err"?6000:3000);
+}
+
+/* ---------------- PDF descargable y WhatsApp ---------------- */
+function nombrePDF(){return `Cotizacion_${(state.meta.numero||"SOLVEX").replace(/[^\w-]+/g,"_")}.pdf`;}
+function logoDataURL(){
+  try{const img=$("solvexLogo"),c=document.createElement("canvas"),size=360;c.width=size;c.height=size;const ctx=c.getContext("2d");ctx.drawImage(img,0,0,size,size);return c.toDataURL("image/jpeg",.88);}catch(_){return null;}
+}
+function cargarScript(src){return new Promise((resolve,reject)=>{const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);});}
+async function asegurarJsPDF(){
+  if(window.jspdf?.jsPDF)return;
+  const fuentes=["https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js","https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js","https://unpkg.com/jspdf@4.2.1/dist/jspdf.umd.min.js"];
+  for(const src of fuentes){try{await cargarScript(src);if(window.jspdf?.jsPDF)return;}catch(_){}}
+  throw new Error("No se pudo cargar el motor PDF. Revise Internet o publique la aplicación en GitHub Pages.");
+}
+function crearPDFBlob(){
+  if(!window.jspdf?.jsPDF)throw new Error("El motor PDF todavía no está disponible.");
+  const {jsPDF}=window.jspdf,doc=new jsPDF({unit:"mm",format:"a4"}),r=calcularFactura(state),m=state.meta;
+  const navy=[13,26,49],blue=[47,96,221],green=[7,157,112],gray=[85,95,110];let y=18;
+  doc.setFillColor(...navy);doc.rect(0,0,210,39,"F");const logo=logoDataURL();if(logo){doc.addImage(logo,"JPEG",14,6,28,28);}else{doc.setFillColor(6,16,29);doc.setDrawColor(102,223,255);doc.setLineWidth(1);doc.circle(28,20,13,"FD");doc.setTextColor(124,232,255);doc.setFont("helvetica","bold");doc.setFontSize(23);doc.text("S",28,27,{align:"center"});}
+  doc.setTextColor(255);doc.setFont("helvetica","bold");doc.setFontSize(16);doc.text(state.empresa.razon,48,14);doc.setFontSize(8.5);doc.setFont("helvetica","normal");doc.text(`NIT ${state.empresa.nit} · ${state.empresa.celular} · ${state.empresa.correo}`,48,20);doc.text(state.empresa.direccion,48,25);
+  doc.setFont("helvetica","bold");doc.text(`COTIZACIÓN ${m.numero||"—"}`,196,31,{align:"right"});doc.setTextColor(20);y=49;
+  const info=[["Fecha",m.fecha||"—"],["Cliente",m.cliente||"—"],["EDS",m.eds||"—"],["Ciudad",m.ciudad||"—"],["Técnico",m.tecnico||"—"]];
+  doc.setDrawColor(205);doc.roundedRect(14,y,182,30,2,2);doc.setFontSize(9);info.forEach((x,i)=>{const col=i%2,row=Math.floor(i/2),xx=18+col*91,yy=y+7+row*8;doc.setFont("helvetica","bold");doc.text(x[0]+":",xx,yy);doc.setFont("helvetica","normal");doc.text(doc.splitTextToSize(String(x[1]),65)[0],xx+19,yy);});y+=38;
+  const rows=[];if(r.valorHoras>0)rows.push([`Servicio técnico (${state.horas} h)`,"1",money.format(r.valorHoras)]);if(r.valorHorasAdicionales>0)rows.push([`Horas adicionales (${state.horasAdicionales} h × ${money.format(state.tarifaHoraAdicional)})`,String(state.horasAdicionales),money.format(r.valorHorasAdicionales)]);
+  state.items.filter(it=>int(it.cantidad)>0).forEach(it=>rows.push([`${it.nombre} — ${money.format(num(it.tarifa))} c/u`,String(int(it.cantidad)),money.format(num(it.tarifa)*int(it.cantidad))]));
+  if(r.valorViaje>0)rows.push([`Viaje a ${state.viaje.destino||"destino"} — ${state.viaje.kmFacturables} km × ${money.format(state.viaje.tarifaKm)}`,`${state.viaje.kmFacturables} km`,money.format(r.valorViaje)]);if(!rows.length)rows.push(["Cotización sin conceptos valorizados","—",money.format(0)]);
+  doc.setFillColor(...blue);doc.rect(14,y,182,8,"F");doc.setTextColor(255);doc.setFont("helvetica","bold");doc.text("DESCRIPCIÓN",18,y+5.5);doc.text("CANT.",154,y+5.5,{align:"right"});doc.text("VALOR",192,y+5.5,{align:"right"});y+=8;doc.setTextColor(20);doc.setFont("helvetica","normal");
+  rows.forEach(row=>{const desc=doc.splitTextToSize(row[0],118),h=Math.max(9,desc.length*4.2+3);if(y+h>255){doc.addPage();y=18;}doc.setDrawColor(225);doc.line(14,y+h,196,y+h);doc.text(desc,18,y+5.5);doc.text(row[1],154,y+5.5,{align:"right"});doc.text(row[2],192,y+5.5,{align:"right"});y+=h;});
+  y+=5;const totals=[["Subtotal",r.subtotal],[r.descuento>0?`Descuento (${state.descuento}%)`:"Descuento",-r.descuento],[`IVA ${pct(r.ivaRate)}%`,r.iva]];doc.setFontSize(10);totals.forEach(t=>{doc.text(t[0],145,y,{align:"right"});doc.text((t[1]<0?"− ":"")+money.format(Math.abs(t[1])),192,y,{align:"right"});y+=7;});doc.setFillColor(...green);doc.roundedRect(120,y-2,76,12,2,2,"F");doc.setTextColor(255);doc.setFont("helvetica","bold");doc.setFontSize(12);doc.text("TOTAL",125,y+5.5);doc.text(money.format(r.total),192,y+5.5,{align:"right"});doc.setTextColor(...gray);y+=18;
+  if(y>248){doc.addPage();y=18;}doc.setDrawColor(205);doc.roundedRect(14,y,182,24,2,2);doc.setTextColor(13,26,49);doc.setFontSize(9);doc.setFont("helvetica","bold");doc.text("MEDIOS Y DATOS DE PAGO",18,y+6);doc.setFont("helvetica","normal");doc.text(`Medios: ${mediosPagoTexto()}`,18,y+12);doc.text(`${state.empresa.banco} · ${state.empresa.tipoCuenta} No. ${state.empresa.cuenta} · Condición: ${state.empresa.condicion}`,18,y+18);y+=31;
+  if(m.notas){if(y>260){doc.addPage();y=18;}doc.setTextColor(20);doc.setFontSize(9);doc.setFont("helvetica","bold");doc.text("Observaciones",14,y);doc.setFont("helvetica","normal");doc.text(doc.splitTextToSize(m.notas,182),14,y+5);}
+  const pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setFontSize(8);doc.setTextColor(...gray);doc.text(`SOLVEX SYSTEM J.B. S.A.S. · Documento generado digitalmente · Página ${p} de ${pages}`,105,290,{align:"center"});}
+  return doc.output("blob");
+}
+function forzarDescarga(blob){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=nombrePDF();a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+async function descargarPDF(){try{await asegurarJsPDF();const blob=crearPDFBlob();forzarDescarga(blob);toast("PDF profesional generado y descargado");return blob;}catch(e){console.error(e);toast(e.message,"err");return null;}}
+async function compartirWhatsApp(){
+  let blob;try{await asegurarJsPDF();blob=crearPDFBlob();forzarDescarga(blob);}catch(e){console.error(e);toast(e.message,"err");return;}const file=new File([blob],nombrePDF(),{type:"application/pdf"});
+  const mensaje=`Cotización ${state.meta.numero||""} de SOLVEX SYSTEM J.B. S.A.S. por ${money.format(calcularFactura(state).total)}${state.meta.eds?` — ${state.meta.eds}`:""}.`;
+  if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({title:"Cotización SOLVEX",text:mensaje,files:[file]});toast("PDF descargado y compartido");return;}catch(e){if(e.name==="AbortError"){toast("PDF descargado; envío cancelado");return;}}}
+  const tel=(state.meta.whatsapp||"").replace(/\D/g,"");const wa=`https://wa.me/${tel}?text=${encodeURIComponent(mensaje+"\n\nEl PDF fue descargado. Adjúntelo en este chat.")}`;toast("PDF descargado. Abriendo WhatsApp…");window.location.href=wa;
+}
+$("pdfBtn").addEventListener("click",descargarPDF);$("whatsappBtn").addEventListener("click",compartirWhatsApp);
+
+/* ---------------- Documento de impresión ---------------- */
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;" }[c])); }
+function renderPrintDoc(){
+  const r=calcularFactura(state), m=state.meta;
+  const filas=[];
+  if(r.valorHoras>0){
+    filas.push(`<tr><td>Servicio técnico por horas</td><td class="r">${state.horas}</td><td class="r">—</td><td class="r">${money.format(r.valorHoras)}</td></tr>`);
+  }
+  if(r.valorHorasAdicionales>0) filas.push(`<tr><td>Horas adicionales</td><td class="r">${num(state.horasAdicionales).toLocaleString("es-CO")}</td><td class="r">${money.format(state.tarifaHoraAdicional)}</td><td class="r">${money.format(r.valorHorasAdicionales)}</td></tr>`);
+  state.items.filter(it=>int(it.cantidad)>0).forEach(it=>{
+    filas.push(`<tr><td>${esc(it.nombre)}</td><td class="r">${int(it.cantidad)}</td><td class="r">${money.format(num(it.tarifa))}</td><td class="r">${money.format(num(it.tarifa)*int(it.cantidad))}</td></tr>`);
+  });
+  if(r.valorViaje>0) filas.push(`<tr><td>Gastos de viaje — ${esc(state.viaje.destino||"destino")}</td><td class="r">${num(state.viaje.kmFacturables).toLocaleString("es-CO",{maximumFractionDigits:1})} km</td><td class="r">${money.format(state.viaje.tarifaKm)}/km</td><td class="r">${money.format(r.valorViaje)}</td></tr>`);
+  if(!filas.length) filas.push(`<tr><td colspan="4" style="color:#888">Sin ítems con cantidad mayor a cero.</td></tr>`);
+
+  $("printDoc").innerHTML=`
+    <div class="p-header">
+      <div class="p-brand">
+        <h2>${esc(state.empresa.razon)}</h2>
+        <p class="p-sub">SERVICIOS TÉCNICOS EDS</p>
+        <small>NIT ${esc(state.empresa.nit)} · ${esc(state.empresa.celular)} · ${esc(state.empresa.correo)}<br>${esc(state.empresa.direccion)}</small>
+      </div>
+      <div class="p-quote">
+        <div class="p-num">${esc(m.numero||"—")}</div>
+        <div>Fecha: ${esc(m.fecha||"—")}</div>
+      </div>
+    </div>
+    <div class="p-client">
+      <div><b>Cliente:</b> ${esc(m.cliente||"—")}</div>
+      <div><b>EDS:</b> ${esc(m.eds||"—")}</div>
+      <div><b>Ciudad:</b> ${esc(m.ciudad||"—")}</div>
+      <div><b>Técnico:</b> ${esc(m.tecnico||"—")}</div>
+    </div>
+    <table class="p-table">
+      <thead><tr><th>Descripción</th><th class="r">Cant.</th><th class="r">Tarifa</th><th class="r">Valor</th></tr></thead>
+      <tbody>${filas.join("")}</tbody>
+    </table>
+    ${r.valorViaje>0?`<div class="p-route"><div class="p-route-title">Detalle del desplazamiento</div><b>Origen:</b> ${esc(state.viaje.origen||"—")} &nbsp; <b>Destino:</b> ${esc(state.viaje.destino||"—")}<br><b>Modalidad:</b> ${state.viaje.trayecto===2?"Ida y regreso":"Solo ida"} &nbsp; <b>Distancia facturable:</b> ${num(state.viaje.kmFacturables).toLocaleString("es-CO",{maximumFractionDigits:1})} km &nbsp; <b>Fuente:</b> ${esc(state.viaje.fuente)}</div>`:""}
+    <div class="p-totals">
+      <div class="pt-row"><span>Subtotal</span><span>${money.format(r.subtotal)}</span></div>
+      ${r.descuento>0?`<div class="pt-row"><span>Descuento (${pct(state.descuento/100)}%)</span><span>− ${money.format(r.descuento)}</span></div>`:""}
+      <div class="pt-row"><span>Base gravable</span><span>${money.format(r.base)}</span></div>
+      <div class="pt-row"><span>IVA ${pct(r.ivaRate)}%</span><span>${money.format(r.iva)}</span></div>
+      <div class="pt-total" style="display:flex;justify-content:space-between"><span>TOTAL</span><span>${money.format(r.total)}</span></div>
+    </div>
+    <div class="p-route"><div class="p-route-title">Medios y datos de pago</div><b>Medios:</b> ${esc(mediosPagoTexto())}<br><b>${esc(state.empresa.banco)}:</b> ${esc(state.empresa.tipoCuenta)} No. ${esc(state.empresa.cuenta)} &nbsp; <b>Condición:</b> ${esc(state.empresa.condicion)}</div>
+    ${m.notas?`<div class="p-notes"><div class="pn-title">Observaciones</div>${esc(m.notas)}</div>`:""}
+    <div class="p-signs">
+      <div class="p-sign-line">Elaboró — ${esc(m.tecnico||"Técnico responsable")}</div>
+      <div class="p-sign-line">Aceptado — Cliente</div>
+    </div>
+    <div class="p-foot">${esc(state.empresa.razon)} · NIT ${esc(state.empresa.nit)} · ${esc(state.empresa.celular)} · Valores en pesos colombianos (COP)</div>
+  `;
+}
+
+/* ---------------- Arranque ---------------- */
+loadState();
+syncMeta();
+syncEmpresa();
+syncTarifas();
+syncViaje();
+syncHorasExtras();
+render();
+wireMeta();
+wireEmpresa();
+
+/* ---------------- Autopruebas (consola) ---------------- */
+(function selfTest(){
+  // Tarifas de prueba fijas e independientes de DEFAULT_TARIFAS (que ahora
+  // inicia en cero para que el usuario digite los valores de cada cotización).
+  const T={ hora1:98000, hora2:49000, hora3:49000, hora4:49000, iva:0.19 };
+  const it=(s,e,c)=>[
+    { nombre:"Sondas",tarifa:406000,cantidad:s },
+    { nombre:"Equipos",tarifa:136000,cantidad:e },
+    { nombre:"Capacitación",tarifa:49000,cantidad:c }
+  ];
+  const casos=[
+    [{ horas:4, items:it(0,0,1), descuento:0, tarifas:T }, 349860],
+    [{ horas:1, items:it(0,0,0), descuento:0, tarifas:T }, 116620],
+    [{ horas:2, items:it(1,2,0), descuento:0, tarifas:T }, 981750],
+    [{ horas:4, items:it(0,0,1), descuento:10, tarifas:T }, 314874]
+  ];
+  const ok=casos.every(([s,exp])=>Math.round(calcularFactura(s).total)===exp);
+  console.info("Autopruebas de cálculo:", ok?"OK ✅":"ERROR ❌");
+})();
+</script>
+</body>
+</html>
