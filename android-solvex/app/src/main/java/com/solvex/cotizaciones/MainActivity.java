@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=110";
+    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=111";
     private static final int CREATE_PDF_REQUEST = 4102;
     private static final int VOICE_REQUEST = 4201;
 
@@ -90,10 +90,11 @@ public class MainActivity extends Activity {
 
     private void installNativePdfHandlers() {
         String js = "(function(){" +
-                "if(window.__solvexPdfNativeV110)return;window.__solvexPdfNativeV110=true;" +
+                "if(window.__solvexPdfNativeV111)return;window.__solvexPdfNativeV111=true;" +
                 "async function pdfToBase64(){await asegurarJsPDF();const blob=crearPDFBlob();if(!blob||blob.size<100)throw new Error('El PDF generado está vacío');return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const s=String(r.result||'');const p=s.indexOf(',');if(p<0)return reject(new Error('No se pudo codificar el PDF'));resolve(s.substring(p+1));};r.onerror=()=>reject(new Error('No se pudo leer el PDF'));r.readAsDataURL(blob);});}" +
+                "function formatCop(value){try{return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Number(value)||0);}catch(e){return '$ '+String(Number(value)||0);}}" +
                 "async function nativeSavePdf(){try{toast('Generando PDF...');const b64=await pdfToBase64();AndroidPdf.savePdf(b64,nombrePDF());}catch(e){console.error(e);toast(e.message||'No se pudo generar el PDF','err');}}" +
-                "async function nativeSharePdf(){try{toast('Preparando PDF para WhatsApp...');const b64=await pdfToBase64();const r=calcularFactura(state);const m='Cotización '+(state.meta.numero||'SOLVEX')+' por '+money(r.total)+(state.meta.eds?' — '+state.meta.eds:'')+'.';AndroidPdf.sharePdf(b64,nombrePDF(),m);}catch(e){console.error(e);toast(e.message||'No se pudo generar el PDF','err');}}" +
+                "async function nativeSharePdf(){try{toast('Preparando PDF para WhatsApp...');const b64=await pdfToBase64();const r=calcularFactura(state);const total=formatCop(r&&r.total);const m='Cotización '+((state&&state.meta&&state.meta.numero)||'SOLVEX')+' por '+total+((state&&state.meta&&state.meta.eds)?' — '+state.meta.eds:'')+'.';AndroidPdf.sharePdf(b64,nombrePDF(),m);}catch(e){console.error(e);toast(e.message||'No se pudo generar o compartir el PDF','err');}}" +
                 "function replaceButton(id,fn){const b=document.getElementById(id);if(!b)return;const n=b.cloneNode(true);b.parentNode.replaceChild(n,b);n.addEventListener('click',function(ev){ev.preventDefault();fn();});}" +
                 "replaceButton('pdfBtn',nativeSavePdf);replaceButton('whatsappBtn',nativeSharePdf);window.__solvexNativeSavePdf=nativeSavePdf;window.__solvexNativeSharePdf=nativeSharePdf;" +
                 "})();";
@@ -102,7 +103,7 @@ public class MainActivity extends Activity {
 
     private void installVoiceAssistant() {
         String js = "(function(){" +
-                "if(window.__solvexVoiceV110)return;window.__solvexVoiceV110=true;" +
+                "if(window.__solvexVoiceV111)return;window.__solvexVoiceV111=true;" +
                 "const defs=[" +
                 "{key:'numero',id:'mNumero',a:['número de cotización','numero de cotización','número','numero']}," +
                 "{key:'fecha',id:'mFecha',a:['fecha']}," +
@@ -175,11 +176,20 @@ public class MainActivity extends Activity {
 
         private byte[] decodePdf(String base64Pdf) {
             try {
-                if (base64Pdf == null || base64Pdf.trim().isEmpty()) { notifyJs("El PDF llegó vacío a Android", true); return null; }
+                if (base64Pdf == null || base64Pdf.trim().isEmpty()) {
+                    notifyJs("El PDF llegó vacío a Android", true);
+                    return null;
+                }
                 byte[] bytes = Base64.decode(base64Pdf, Base64.DEFAULT);
-                if (bytes.length < 100) { notifyJs("El PDF generado no contiene datos válidos", true); return null; }
+                if (bytes.length < 100) {
+                    notifyJs("El PDF generado no contiene datos válidos", true);
+                    return null;
+                }
                 return bytes;
-            } catch (Exception e) { notifyJs("No se pudo convertir el PDF: " + safeMessage(e), true); return null; }
+            } catch (Exception e) {
+                notifyJs("No se pudo convertir el PDF: " + safeMessage(e), true);
+                return null;
+            }
         }
     }
 
@@ -188,7 +198,10 @@ public class MainActivity extends Activity {
             File pdfDir = new File(getCacheDir(), "pdf");
             if (!pdfDir.exists() && !pdfDir.mkdirs()) throw new IOException("No se pudo crear caché PDF");
             File pdfFile = new File(pdfDir, sanitizeFileName(fileName));
-            try (FileOutputStream fos = new FileOutputStream(pdfFile)) { fos.write(pdfBytes); fos.flush(); }
+            try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
+                fos.write(pdfBytes);
+                fos.flush();
+            }
             Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".files", pdfFile);
             Intent send = new Intent(Intent.ACTION_SEND);
             send.setType("application/pdf");
@@ -196,15 +209,33 @@ public class MainActivity extends Activity {
             send.putExtra(Intent.EXTRA_TEXT, message == null ? "Cotización SOLVEX" : message);
             send.setClipData(ClipData.newRawUri("Cotización SOLVEX", uri));
             send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            if (isPackageAvailable("com.whatsapp")) { send.setPackage("com.whatsapp"); startActivity(send); notifyJs("WhatsApp abierto con el PDF adjunto", false); }
-            else if (isPackageAvailable("com.whatsapp.w4b")) { send.setPackage("com.whatsapp.w4b"); startActivity(send); notifyJs("WhatsApp Business abierto con el PDF adjunto", false); }
-            else { send.setPackage(null); startActivity(Intent.createChooser(send, "Compartir cotización PDF")); notifyJs("Selecciona WhatsApp para enviar el PDF", false); }
-        } catch (ActivityNotFoundException e) { notifyJs("No se encontró una aplicación para compartir el PDF", true); }
-        catch (Exception e) { notifyJs("Error al compartir el PDF: " + safeMessage(e), true); }
+            if (isPackageAvailable("com.whatsapp")) {
+                send.setPackage("com.whatsapp");
+                startActivity(send);
+                notifyJs("WhatsApp abierto con el PDF adjunto", false);
+            } else if (isPackageAvailable("com.whatsapp.w4b")) {
+                send.setPackage("com.whatsapp.w4b");
+                startActivity(send);
+                notifyJs("WhatsApp Business abierto con el PDF adjunto", false);
+            } else {
+                send.setPackage(null);
+                startActivity(Intent.createChooser(send, "Compartir cotización PDF"));
+                notifyJs("Selecciona WhatsApp para enviar el PDF", false);
+            }
+        } catch (ActivityNotFoundException e) {
+            notifyJs("No se encontró una aplicación para compartir el PDF", true);
+        } catch (Exception e) {
+            notifyJs("Error al compartir el PDF: " + safeMessage(e), true);
+        }
     }
 
     private boolean isPackageAvailable(String packageName) {
-        try { getPackageManager().getPackageInfo(packageName, 0); return true; } catch (Exception e) { return false; }
+        try {
+            getPackageManager().getPackageInfo(packageName, 0);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
@@ -217,9 +248,15 @@ public class MainActivity extends Activity {
                 if (results != null && !results.isEmpty()) {
                     String transcript = results.get(0);
                     String quoted = JSONObject.quote(transcript == null ? "" : transcript);
-                    if (webView != null) webView.evaluateJavascript("if(window.__solvexApplyVoiceTranscript)window.__solvexApplyVoiceTranscript(" + quoted + ");", null);
-                } else notifyJs("No se reconoció ningún texto", true);
-            } else notifyJs("Dictado cancelado", false);
+                    if (webView != null) {
+                        webView.evaluateJavascript("if(window.__solvexApplyVoiceTranscript)window.__solvexApplyVoiceTranscript(" + quoted + ");", null);
+                    }
+                } else {
+                    notifyJs("No se reconoció ningún texto", true);
+                }
+            } else {
+                notifyJs("Dictado cancelado", false);
+            }
             return;
         }
 
@@ -228,9 +265,15 @@ public class MainActivity extends Activity {
             Uri uri = data.getData();
             try (OutputStream out = getContentResolver().openOutputStream(uri)) {
                 if (out == null) throw new IOException("No se pudo abrir el archivo destino");
-                out.write(pendingPdfBytes); out.flush(); notifyJs("PDF guardado correctamente", false);
-            } catch (Exception e) { notifyJs("No se pudo guardar el PDF: " + safeMessage(e), true); }
-        } else notifyJs("Guardado de PDF cancelado", false);
+                out.write(pendingPdfBytes);
+                out.flush();
+                notifyJs("PDF guardado correctamente", false);
+            } catch (Exception e) {
+                notifyJs("No se pudo guardar el PDF: " + safeMessage(e), true);
+            }
+        } else {
+            notifyJs("Guardado de PDF cancelado", false);
+        }
         pendingPdfBytes = null;
         pendingPdfName = null;
     }
@@ -242,7 +285,9 @@ public class MainActivity extends Activity {
         return name;
     }
 
-    private String safeMessage(Exception e) { return e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage(); }
+    private String safeMessage(Exception e) {
+        return e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage();
+    }
 
     private void notifyJs(String message, boolean error) {
         runOnUiThread(() -> {
@@ -253,10 +298,15 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) { webView.saveState(outState); super.onSaveInstanceState(outState); }
+    protected void onSaveInstanceState(Bundle outState) {
+        webView.saveState(outState);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
-    public void onBackPressed() { if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed(); }
+    public void onBackPressed() {
+        if (webView != null && webView.canGoBack()) webView.goBack(); else super.onBackPressed();
+    }
 
     @Override
     protected void onDestroy() {
