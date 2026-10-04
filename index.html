@@ -208,7 +208,7 @@ button{cursor:pointer}
       <div class="field"><label for="mEds">Estación de servicio (EDS)</label><input id="mEds" type="text" placeholder="Nombre / código de la EDS" autocomplete="off"></div>
       <div class="field"><label for="mCiudad">Ciudad</label><input id="mCiudad" type="text" placeholder="Ciudad" autocomplete="off"></div>
       <div class="field"><label for="mTecnico">Técnico responsable</label><input id="mTecnico" type="text" placeholder="Nombre del técnico" autocomplete="off"></div>
-      <div class="field"><label for="mWhatsApp">WhatsApp del cliente (opcional)</label><input id="mWhatsApp" type="tel" placeholder="Ej. 573001234567" autocomplete="tel"></div>
+      <div class="field"><label for="mWhatsApp">WhatsApp del cliente (a este número se enviará la cotización)</label><input id="mWhatsApp" type="tel" placeholder="Ej. 3001234567" inputmode="tel" autocomplete="tel"></div>
       <div class="field full"><label for="mNotas">Observaciones (aparecen en la cotización impresa)</label><textarea id="mNotas" placeholder="Condiciones, validez de la oferta, alcance del servicio…"></textarea></div>
     </div>
     <div class="extra-hours">
@@ -788,11 +788,22 @@ function crearPDFBlob(){
 }
 function forzarDescarga(blob){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=nombrePDF();a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
 async function descargarPDF(){try{await asegurarJsPDF();const blob=crearPDFBlob();forzarDescarga(blob);toast("PDF profesional generado y descargado");return blob;}catch(e){console.error(e);toast(e.message,"err");return null;}}
+/* v1.2.0: número del cliente -> formato internacional sin "+" (Colombia por defecto: 10 dígitos que inician en 3 => 57 + número). Devuelve "" si no es válido. */
+function telefonoWhatsApp(raw){
+  let d=String(raw||"").replace(/\D/g,"").replace(/^00/,"");
+  if(d.length===10&&d[0]==="3")d="57"+d;
+  return d.length>=11&&d.length<=15?d:"";
+}
+window.telefonoWhatsApp=telefonoWhatsApp;
 async function compartirWhatsApp(){
+  const crudo=String(state.meta.whatsapp||"").trim(),tel=telefonoWhatsApp(crudo);
+  if(crudo&&!tel){toast("El número de WhatsApp no es válido. Use 10 dígitos (ej. 3001234567) o con indicativo (ej. 573001234567).","err");return;}
   let blob;try{await asegurarJsPDF();blob=crearPDFBlob();forzarDescarga(blob);}catch(e){console.error(e);toast(e.message,"err");return;}const file=new File([blob],nombrePDF(),{type:"application/pdf"});
   const mensaje=`Cotización ${state.meta.numero||""} de SOLVEX SYSTEM J.B. S.A.S. por ${money.format(calcularFactura(state).total)}${state.meta.eds?` — ${state.meta.eds}`:""}.`;
+  /* Con número: abre directamente el chat de ese cliente (el navegador no permite adjuntar el PDF por enlace; el PDF queda descargado. El envío con adjunto automático lo hace la app Android). */
+  if(tel){toast("PDF descargado. Abriendo el chat de WhatsApp del cliente…");window.location.href=`https://wa.me/${tel}?text=${encodeURIComponent(mensaje+"\n\nAdjunto la cotización en PDF.")}`;return;}
   if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({title:"Cotización SOLVEX",text:mensaje,files:[file]});toast("PDF descargado y compartido");return;}catch(e){if(e.name==="AbortError"){toast("PDF descargado; envío cancelado");return;}}}
-  const tel=(state.meta.whatsapp||"").replace(/\D/g,"");const wa=`https://wa.me/${tel}?text=${encodeURIComponent(mensaje+"\n\nEl PDF fue descargado. Adjúntelo en este chat.")}`;toast("PDF descargado. Abriendo WhatsApp…");window.location.href=wa;
+  const wa=`https://wa.me/?text=${encodeURIComponent(mensaje+"\n\nEl PDF fue descargado. Adjúntelo en este chat.")}`;toast("PDF descargado. Abriendo WhatsApp…");window.location.href=wa;
 }
 $("pdfBtn").addEventListener("click",descargarPDF);$("whatsappBtn").addEventListener("click",compartirWhatsApp);
 

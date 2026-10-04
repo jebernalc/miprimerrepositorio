@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=111";
+    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=120";
     private static final int CREATE_PDF_REQUEST = 4102;
     private static final int VOICE_REQUEST = 4201;
 
@@ -90,11 +90,11 @@ public class MainActivity extends Activity {
 
     private void installNativePdfHandlers() {
         String js = "(function(){" +
-                "if(window.__solvexPdfNativeV111)return;window.__solvexPdfNativeV111=true;" +
+                "if(window.__solvexPdfNativeV120)return;window.__solvexPdfNativeV120=true;" +
                 "async function pdfToBase64(){await asegurarJsPDF();const blob=crearPDFBlob();if(!blob||blob.size<100)throw new Error('El PDF generado está vacío');return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const s=String(r.result||'');const p=s.indexOf(',');if(p<0)return reject(new Error('No se pudo codificar el PDF'));resolve(s.substring(p+1));};r.onerror=()=>reject(new Error('No se pudo leer el PDF'));r.readAsDataURL(blob);});}" +
                 "function formatCop(value){try{return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Number(value)||0);}catch(e){return '$ '+String(Number(value)||0);}}" +
                 "async function nativeSavePdf(){try{toast('Generando PDF...');const b64=await pdfToBase64();AndroidPdf.savePdf(b64,nombrePDF());}catch(e){console.error(e);toast(e.message||'No se pudo generar el PDF','err');}}" +
-                "async function nativeSharePdf(){try{toast('Preparando PDF para WhatsApp...');const b64=await pdfToBase64();const r=calcularFactura(state);const total=formatCop(r&&r.total);const m='Cotización '+((state&&state.meta&&state.meta.numero)||'SOLVEX')+' por '+total+((state&&state.meta&&state.meta.eds)?' — '+state.meta.eds:'')+'.';AndroidPdf.sharePdf(b64,nombrePDF(),m);}catch(e){console.error(e);toast(e.message||'No se pudo generar o compartir el PDF','err');}}" +
+                "async function nativeSharePdf(){try{toast('Preparando PDF para WhatsApp...');const b64=await pdfToBase64();const r=calcularFactura(state);const total=formatCop(r&&r.total);const tel=(typeof window.telefonoWhatsApp==='function')?window.telefonoWhatsApp(state&&state.meta&&state.meta.whatsapp):'';const crudo=String((state&&state.meta&&state.meta.whatsapp)||'').trim();if(crudo&&!tel){toast('El número de WhatsApp no es válido. Use 10 dígitos (ej. 3001234567) o con indicativo','err');return;}const m='Cotización '+((state&&state.meta&&state.meta.numero)||'SOLVEX')+' por '+total+((state&&state.meta&&state.meta.eds)?' — '+state.meta.eds:'')+'.';AndroidPdf.sharePdf(b64,nombrePDF(),m,tel);}catch(e){console.error(e);toast(e.message||'No se pudo generar o compartir el PDF','err');}}" +
                 "function replaceButton(id,fn){const b=document.getElementById(id);if(!b)return;const n=b.cloneNode(true);b.parentNode.replaceChild(n,b);n.addEventListener('click',function(ev){ev.preventDefault();fn();});}" +
                 "replaceButton('pdfBtn',nativeSavePdf);replaceButton('whatsappBtn',nativeSharePdf);window.__solvexNativeSavePdf=nativeSavePdf;window.__solvexNativeSharePdf=nativeSharePdf;" +
                 "})();";
@@ -168,10 +168,15 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public void sharePdf(String base64Pdf, String fileName, String message) {
+        public void sharePdf(String base64Pdf, String fileName, String message, String phone) {
             byte[] bytes = decodePdf(base64Pdf);
             if (bytes == null) return;
-            runOnUiThread(() -> sharePdfNative(bytes, fileName, message));
+            runOnUiThread(() -> sharePdfNative(bytes, fileName, message, phone));
+        }
+
+        @JavascriptInterface
+        public void sharePdf(String base64Pdf, String fileName, String message) {
+            sharePdf(base64Pdf, fileName, message, "");
         }
 
         private byte[] decodePdf(String base64Pdf) {
@@ -193,7 +198,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void sharePdfNative(byte[] pdfBytes, String fileName, String message) {
+    private void sharePdfNative(byte[] pdfBytes, String fileName, String message, String phone) {
         try {
             File pdfDir = new File(getCacheDir(), "pdf");
             if (!pdfDir.exists() && !pdfDir.mkdirs()) throw new IOException("No se pudo crear caché PDF");
@@ -209,18 +214,24 @@ public class MainActivity extends Activity {
             send.putExtra(Intent.EXTRA_TEXT, message == null ? "Cotización SOLVEX" : message);
             send.setClipData(ClipData.newRawUri("Cotización SOLVEX", uri));
             send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            String digits = phone == null ? "" : phone.replaceAll("\\D", "");
+            boolean hasPhone = digits.length() >= 11 && digits.length() <= 15;
+            // Con número: el extra "jid" hace que WhatsApp abra directamente el chat de ese contacto
+            // con el PDF adjunto, listo para presionar Enviar.
+            if (hasPhone) send.putExtra("jid", digits + "@s.whatsapp.net");
             if (isPackageAvailable("com.whatsapp")) {
                 send.setPackage("com.whatsapp");
                 startActivity(send);
-                notifyJs("WhatsApp abierto con el PDF adjunto", false);
+                notifyJs(hasPhone ? "Chat de WhatsApp abierto con el PDF adjunto: solo presione Enviar" : "WhatsApp abierto con el PDF adjunto (elija el contacto)", false);
             } else if (isPackageAvailable("com.whatsapp.w4b")) {
                 send.setPackage("com.whatsapp.w4b");
                 startActivity(send);
-                notifyJs("WhatsApp Business abierto con el PDF adjunto", false);
+                notifyJs(hasPhone ? "Chat de WhatsApp Business abierto con el PDF adjunto: solo presione Enviar" : "WhatsApp Business abierto con el PDF adjunto (elija el contacto)", false);
             } else {
+                send.removeExtra("jid");
                 send.setPackage(null);
                 startActivity(Intent.createChooser(send, "Compartir cotización PDF"));
-                notifyJs("Selecciona WhatsApp para enviar el PDF", false);
+                notifyJs("WhatsApp no está instalado: seleccione una aplicación para enviar el PDF", false);
             }
         } catch (ActivityNotFoundException e) {
             notifyJs("No se encontró una aplicación para compartir el PDF", true);
