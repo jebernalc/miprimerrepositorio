@@ -116,6 +116,11 @@ button{cursor:pointer}
 .invalid{border-color:var(--danger)!important;box-shadow:0 0 0 3px rgba(255,107,107,.14)!important}
 
 /* Toast */
+.apk-card{margin:14px 0 0;border:1px solid #2f6f55;background:linear-gradient(135deg,#0b2a1f,#10382b);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.apk-card .apk-txt{flex:1 1 240px;font-size:13px;line-height:1.45;color:#c9ffe9}.apk-card .apk-txt strong{display:block;font-size:15px;color:#fff;margin-bottom:2px}
+.apk-card a.apk-btn{background:var(--green);color:#042417;font-weight:900;text-decoration:none;border-radius:11px;padding:12px 18px;white-space:nowrap}
+.apk-card a.apk-btn:hover{filter:brightness(1.08)}
+.in-app .apk-card{display:none}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0b2a1f;border:1px solid var(--green);color:#c9ffe9;
   padding:12px 18px;border-radius:12px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -321,12 +326,16 @@ button{cursor:pointer}
       <button class="action ghost-danger" id="resetAll" type="button">Limpiar cotización</button>
       <input id="fileInput" type="file" accept="application/json,.json" hidden>
     </div>
+    <div class="apk-card" id="apkCard">
+      <div class="apk-txt"><strong>📱 App Android SOLVEX Cotizaciones · v1.2.0</strong>Al finalizar la cotización abre WhatsApp directamente en el chat del número del cliente, con el PDF ya adjunto: solo presione Enviar. En el navegador el PDF debe adjuntarse manualmente (📎 → Documento).</div>
+      <a class="apk-btn" id="apkLink" href="https://github.com/jebernalc/miprimerrepositorio/releases/latest/download/SOLVEX-Cotizaciones.apk" download>⬇ Descargar APK</a>
+    </div>
     <div class="note">Los cambios se guardan automáticamente. La cotización funciona sin servidor; el cálculo de ruta requiere Internet. Si no hay conexión, registre los kilómetros manualmente.</div>
   </section>
 
   <div class="footer">
     Aplicación local · Un solo archivo HTML · Datos guardados en el navegador<br>
-    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral
+    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral · v1.2.0
   </div>
 </main>
 
@@ -335,6 +344,7 @@ button{cursor:pointer}
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script>try{if(/[?&]android=1\b/.test(location.search))document.documentElement.classList.add("in-app");}catch(_){}</script>
 <script src="https://unpkg.com/jspdf@4.2.1/dist/jspdf.umd.min.js"></script>
 <script>
 "use strict";
@@ -801,7 +811,7 @@ async function compartirWhatsApp(){
   let blob;try{await asegurarJsPDF();blob=crearPDFBlob();forzarDescarga(blob);}catch(e){console.error(e);toast(e.message,"err");return;}const file=new File([blob],nombrePDF(),{type:"application/pdf"});
   const mensaje=`Cotización ${state.meta.numero||""} de SOLVEX SYSTEM J.B. S.A.S. por ${money.format(calcularFactura(state).total)}${state.meta.eds?` — ${state.meta.eds}`:""}.`;
   /* Con número: abre directamente el chat de ese cliente (el navegador no permite adjuntar el PDF por enlace; el PDF queda descargado. El envío con adjunto automático lo hace la app Android). */
-  if(tel){toast("PDF descargado. Abriendo el chat de WhatsApp del cliente…");window.location.href=`https://wa.me/${tel}?text=${encodeURIComponent(mensaje+"\n\nAdjunto la cotización en PDF.")}`;return;}
+  if(tel){toast("PDF descargado. En WhatsApp toque 📎 → Documento y elija "+nombrePDF(),"" );setTimeout(()=>{window.location.href=`https://wa.me/${tel}?text=${encodeURIComponent(mensaje+"\n\nAdjunto la cotización en PDF.")}`;},1400);return;}
   if(navigator.share&&navigator.canShare?.({files:[file]})){try{await navigator.share({title:"Cotización SOLVEX",text:mensaje,files:[file]});toast("PDF descargado y compartido");return;}catch(e){if(e.name==="AbortError"){toast("PDF descargado; envío cancelado");return;}}}
   const wa=`https://wa.me/?text=${encodeURIComponent(mensaje+"\n\nEl PDF fue descargado. Adjúntelo en este chat.")}`;toast("PDF descargado. Abriendo WhatsApp…");window.location.href=wa;
 }

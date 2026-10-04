@@ -9,7 +9,7 @@ on:
       - ".github/workflows/android-apk.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -36,12 +36,30 @@ jobs:
         run: gradle --no-daemon :app:assembleDebug
 
       - name: Preparar nombre del APK
-        run: cp android-solvex/app/build/outputs/apk/debug/app-debug.apk SOLVEX-Cotizaciones-v1.2.0.apk
+        run: |
+          VERSION=$(grep -oP "versionName '\K[^']+" android-solvex/app/build.gradle)
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          cp android-solvex/app/build/outputs/apk/debug/app-debug.apk "SOLVEX-Cotizaciones-v${VERSION}.apk"
+          cp android-solvex/app/build/outputs/apk/debug/app-debug.apk SOLVEX-Cotizaciones.apk
 
-      - name: Publicar APK
+      - name: Publicar APK (artefacto)
         uses: actions/upload-artifact@v4
         with:
           name: SOLVEX-Cotizaciones-APK
-          path: SOLVEX-Cotizaciones-v1.2.0.apk
+          path: SOLVEX-Cotizaciones-v*.apk
           if-no-files-found: error
           retention-days: 30
+
+      - name: Publicar APK descargable (release público)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${VERSION}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" SOLVEX-Cotizaciones.apk "SOLVEX-Cotizaciones-v${VERSION}.apk" --clobber
+          else
+            gh release create "$TAG" SOLVEX-Cotizaciones.apk "SOLVEX-Cotizaciones-v${VERSION}.apk" \
+              --target "${{ github.sha }}" --latest \
+              --title "SOLVEX Cotizaciones v${VERSION}" \
+              --notes "App Android de cotizaciones SOLVEX. Al finalizar la cotización abre WhatsApp en el chat del número del cliente con el PDF adjunto. Si ya tiene una versión anterior instalada y Android indica conflicto, desinstálela primero e instale esta."
+          fi
