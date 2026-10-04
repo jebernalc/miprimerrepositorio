@@ -121,24 +121,29 @@ button{cursor:pointer}
 .apk-card a.apk-btn{background:var(--green);color:#042417;font-weight:900;text-decoration:none;border-radius:11px;padding:12px 18px;white-space:nowrap}
 .apk-card a.apk-btn:hover{filter:brightness(1.08)}
 .in-app .apk-card{display:none}
-/* ---- Firma en pantalla (v1.3.0) ---- */
+/* ---- Firma en pantalla ---- */
 .sig-wrap{padding:16px}
-.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.sig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
 .sig-grid .sig-name{background:#0b172b;border:1px solid #456387;border-radius:10px;padding:11px 12px;min-height:44px;font-weight:800;color:#fff;overflow-wrap:anywhere}
-.sig-grid .sig-name.vacio{color:#8fa3c4;font-weight:600}
+.sig-grid .sig-name.vacio{color:#8fa3c4;font-weight:600;font-size:13px}
 .sig-box{position:relative;border:2px dashed #6f8fbd;border-radius:14px;background:#fff;overflow:hidden;transition:border-color .2s}
 .sig-box.signed{border-style:solid;border-color:var(--green)}
-#sigPad{display:block;width:100%;height:210px;touch-action:none;cursor:crosshair;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.sig-line{position:absolute;left:18px;right:18px;bottom:46px;border-top:2px solid #9aa9c2;pointer-events:none}
-.sig-x{position:absolute;left:20px;bottom:52px;color:#9aa9c2;font:700 22px/1 sans-serif;pointer-events:none}
-.sig-hint{position:absolute;left:0;right:0;top:0;bottom:56px;display:flex;align-items:center;justify-content:center;color:#7d8da8;font-weight:700;font-size:14px;text-align:center;padding:0 24px;pointer-events:none}
+.sig-pad-wrap{position:relative}
+#sigPad{display:block;width:100%;height:190px;touch-action:none;cursor:crosshair;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.sig-line{position:absolute;left:18px;right:18px;bottom:30px;border-top:2px solid #9aa9c2;pointer-events:none}
+.sig-x{position:absolute;left:20px;bottom:36px;color:#9aa9c2;font:700 22px/1 sans-serif;pointer-events:none}
+.sig-hint{position:absolute;left:0;right:0;top:0;bottom:36px;display:flex;align-items:center;justify-content:center;color:#7d8da8;font-weight:700;font-size:14px;text-align:center;padding:0 24px;pointer-events:none}
 .sig-box.signed .sig-hint,.sig-box.tinta .sig-hint{display:none}
-.sig-cap{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:12px;line-height:1.35;color:#3d4a63;font-weight:700;pointer-events:none;padding:0 12px}
+.sig-id{border-top:2px solid #dfe6f3;background:#f3f6fb;color:#1d2b45;padding:10px 16px 12px;display:grid;gap:2px;text-align:center}
+.sig-id-t{font-size:10px;letter-spacing:.14em;font-weight:900;color:#5b6b88}
+.sig-id-n{font-size:16px;font-weight:900;color:#0d1a31;overflow-wrap:anywhere}
+.sig-id-r{font-size:13px;color:#33435f;font-weight:600;overflow-wrap:anywhere}.sig-id-r:empty{display:none}
+.sig-id-e{font-size:12px;color:#5b6b88}.sig-id-f{font-size:12px;color:#2f7a5a;font-weight:800}
 .sig-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
 .sig-status{flex:1 1 220px;font-size:13px;color:var(--muted)}.sig-status.ok{color:#7be8b9;font-weight:800}
 .sig-note{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
 .sig-alert{animation:sigAlert .55s ease 3}@keyframes sigAlert{50%{box-shadow:0 0 0 5px rgba(255,107,107,.65)}}
-@media(max-width:560px){.sig-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.sig-grid{grid-template-columns:1fr}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0b2a1f;border:1px solid var(--green);color:#c9ffe9;
   padding:12px 18px;border-radius:12px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -198,11 +203,13 @@ button{cursor:pointer}
   .p-notes .pn-title{font-weight:800;color:#0d1a31;margin-bottom:4px}
   .p-signs{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:28px;break-inside:avoid;page-break-inside:avoid}
   .p-sign-title{font-size:10px;font-weight:800;color:#0d1a31;letter-spacing:.05em;margin-bottom:6px}
-  .p-sign-box{position:relative;height:96px;border:1px solid #b5b5b5;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:6px 12px 22px}
-  .p-sign-box::after{content:"";position:absolute;left:14px;right:14px;bottom:20px;border-top:1px solid #333}
+  .p-sign-card{border:1px solid #b5b5b5;border-radius:8px;overflow:hidden}
+  .p-sign-box{position:relative;height:90px;display:flex;align-items:center;justify-content:center;padding:6px 12px 20px}
+  .p-sign-box::after{content:"";position:absolute;left:14px;right:14px;bottom:18px;border-top:1px solid #333}
+  .p-sign-id{border-top:1px solid #ddd;background:#f6f8fb;padding:6px 12px 10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .p-sign-box img{max-width:100%;max-height:100%;object-fit:contain}
-  .p-sign-cap{text-align:center;font-size:9px;color:#777;margin-top:3px}
-  .p-sign-name{font-size:12px;font-weight:800;color:#0d1a31;margin-top:8px}
+  .p-sign-cap{text-align:center;font-size:9px;color:#777;margin-top:0}
+  .p-sign-name{font-size:12px;font-weight:800;color:#0d1a31;margin-top:5px}
   .p-sign-meta{font-size:10.5px;color:#444;margin-top:2px}
   .p-sign-field{display:flex;align-items:flex-end;gap:6px;font-size:11px;color:#333;margin-top:11px}.p-sign-field span{flex:1;border-bottom:1px solid #666;height:12px}
   .p-foot{margin-top:26px;border-top:1px solid #ccc;padding-top:8px;font-size:10px;color:#777;text-align:center}
@@ -235,8 +242,13 @@ button{cursor:pointer}
       <div class="field"><label for="mNumero">N.º de cotización</label><input id="mNumero" type="text" autocomplete="off"></div>
       <div class="field"><label for="mFecha">Fecha</label><input id="mFecha" type="date"></div>
       <div class="field"><label for="mCliente">Cliente / Razón social</label><input id="mCliente" type="text" placeholder="Nombre del cliente" autocomplete="off"></div>
+      <div class="field"><label for="mNit">NIT / RUT del cliente</label><input id="mNit" type="text" placeholder="Ej. 900.123.456-7" inputmode="numeric" autocomplete="off"></div>
       <div class="field"><label for="mEds">Estación de servicio (EDS)</label><input id="mEds" type="text" placeholder="Nombre / código de la EDS" autocomplete="off"></div>
       <div class="field"><label for="mCiudad">Ciudad</label><input id="mCiudad" type="text" placeholder="Ciudad" autocomplete="off"></div>
+      <div class="field"><label for="mDireccion">Dirección</label><input id="mDireccion" type="text" placeholder="Ej. Calle 80 # 12-30" autocomplete="off"></div>
+      <div class="field"><label for="mTelefono">Teléfono de la estación</label><input id="mTelefono" type="tel" placeholder="Ej. (601) 234 5678" inputmode="tel" autocomplete="off"></div>
+      <div class="field"><label for="mCorreo">Correo electrónico</label><input id="mCorreo" type="email" placeholder="correo@empresa.com" autocomplete="off"></div>
+      <div class="field"><label for="mContacto">Persona de contacto</label><input id="mContacto" type="text" placeholder="Nombre de quien atiende" autocomplete="off"></div>
       <div class="field"><label for="mTecnico">Técnico responsable</label><input id="mTecnico" type="text" placeholder="Nombre del técnico" autocomplete="off"></div>
       <div class="field"><label for="mWhatsApp">WhatsApp del cliente (a este número se enviará la cotización)</label><input id="mWhatsApp" type="tel" placeholder="Ej. 3001234567" inputmode="tel" autocomplete="tel"></div>
       <div class="field full"><label for="mNotas">Observaciones (aparecen en la cotización impresa)</label><textarea id="mNotas" placeholder="Condiciones, validez de la oferta, alcance del servicio…"></textarea></div>
@@ -332,12 +344,22 @@ button{cursor:pointer}
       <div class="sig-grid">
         <div class="field"><label>Firmante (campo «Técnico responsable»)</label><div class="sig-name vacio" id="sigNombre">Escriba el nombre del técnico en «Datos de la cotización»</div></div>
         <div class="field"><label for="mCargo">Cargo del firmante</label><input id="mCargo" type="text" placeholder="Ej. Técnico de servicio" autocomplete="off"></div>
+        <div class="field"><label for="mDocFirma">C.C. del firmante (opcional)</label><input id="mDocFirma" type="text" placeholder="Ej. 79.123.456" inputmode="numeric" autocomplete="off"></div>
       </div>
       <div class="sig-box" id="sigBox">
-        <canvas id="sigPad" aria-label="Recuadro de firma: firme con el dedo, lápiz o mouse"></canvas>
-        <div class="sig-hint" id="sigHint">Firme aquí con el dedo, lápiz o mouse</div>
-        <span class="sig-x" aria-hidden="true">✕</span><div class="sig-line"></div>
-        <div class="sig-cap" id="sigCap"></div>
+        <div class="sig-pad-wrap">
+          <canvas id="sigPad" aria-label="Recuadro de firma: firme con el dedo, lápiz o mouse"></canvas>
+          <div class="sig-hint" id="sigHint">Firme aquí con el dedo, lápiz o mouse</div>
+          <span class="sig-x" aria-hidden="true">✕</span><div class="sig-line"></div>
+        </div>
+        <div class="sig-id" id="sigId" aria-label="Texto de firma">
+          <div class="sig-id-t">FIRMADO POR</div>
+          <div class="sig-id-n" id="sigIdNombre">—</div>
+          <div class="sig-id-r" id="sigIdCargo"></div>
+          <div class="sig-id-r" id="sigIdDocRow">C.C. <span id="sigIdDoc"></span></div>
+          <div class="sig-id-r sig-id-e" id="sigIdEmpresa"></div>
+          <div class="sig-id-r sig-id-f" id="sigIdFecha"></div>
+        </div>
       </div>
       <div class="sig-bar">
         <div class="sig-status" id="sigStatus" aria-live="polite">Sin firma</div>
@@ -375,7 +397,7 @@ button{cursor:pointer}
       <input id="fileInput" type="file" accept="application/json,.json" hidden>
     </div>
     <div class="apk-card" id="apkCard">
-      <div class="apk-txt"><strong>📱 App Android SOLVEX Cotizaciones · v1.3.0</strong>Incluye firma en pantalla en el PDF. Al finalizar la cotización abre WhatsApp directamente en el chat del número del cliente, con el PDF ya adjunto: solo presione Enviar. En el navegador el PDF debe adjuntarse manualmente (📎 → Documento).</div>
+      <div class="apk-txt"><strong>📱 App Android SOLVEX Cotizaciones · v1.4.0</strong>Incluye asistente de voz con IA y firma en pantalla. Al finalizar la cotización abre WhatsApp directamente en el chat del número del cliente, con el PDF ya adjunto: solo presione Enviar. En el navegador el PDF debe adjuntarse manualmente (📎 → Documento).</div>
       <a class="apk-btn" id="apkLink" href="https://github.com/jebernalc/miprimerrepositorio/releases/latest/download/SOLVEX-Cotizaciones.apk" download>⬇ Descargar APK</a>
     </div>
     <div class="note">Los cambios se guardan automáticamente. La cotización funciona sin servidor; el cálculo de ruta requiere Internet. Si no hay conexión, registre los kilómetros manualmente.</div>
@@ -383,7 +405,7 @@ button{cursor:pointer}
 
   <div class="footer">
     Aplicación local · Un solo archivo HTML · Datos guardados en el navegador<br>
-    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral · v1.3.0
+    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral · v1.4.0
   </div>
 </main>
 
@@ -433,7 +455,7 @@ let state = crearEstadoInicial();
 
 function crearEstadoInicial(){
   return {
-    meta:{ numero:nuevaCotizacion(), fecha:hoyISO(), cliente:"", eds:"", ciudad:"", tecnico:"", cargo:"Técnico de servicio", whatsapp:"", notas:"" },
+    meta:{ numero:nuevaCotizacion(), fecha:hoyISO(), cliente:"", eds:"", ciudad:"", tecnico:"", cargo:"Técnico de servicio", docFirma:"", nit:"", direccion:"", telefono:"", correo:"", contacto:"", whatsapp:"", notas:"" },
     firma:{ img:"", momento:"" },
     empresa:{...DEFAULT_EMPRESA,pagos:{...DEFAULT_EMPRESA.pagos}},
     horas:0,
@@ -489,6 +511,12 @@ function sanitizarEstado(x){
       ciudad: String(m.ciudad ?? "").slice(0,80),
       tecnico:String(m.tecnico ?? "").slice(0,120),
       cargo:  String(m.cargo ?? "Técnico de servicio").slice(0,80),
+      docFirma:String(m.docFirma ?? "").slice(0,30),
+      nit:    String(m.nit ?? "").slice(0,30),
+      direccion:String(m.direccion ?? "").slice(0,160),
+      telefono:String(m.telefono ?? "").slice(0,40),
+      correo: String(m.correo ?? "").slice(0,120),
+      contacto:String(m.contacto ?? "").slice(0,120),
       whatsapp:String(m.whatsapp ?? "").replace(/[^\d+]/g,"").slice(0,20),
       notas:  String(m.notas ?? "").slice(0,600)
     };
@@ -574,12 +602,13 @@ function syncMeta(){
   $("mWhatsApp").value=state.meta.whatsapp;
   $("mNotas").value  = state.meta.notas;
   $("mCargo").value  = state.meta.cargo;
+  $("mDocFirma").value=state.meta.docFirma;$("mNit").value=state.meta.nit;$("mDireccion").value=state.meta.direccion;$("mTelefono").value=state.meta.telefono;$("mCorreo").value=state.meta.correo;$("mContacto").value=state.meta.contacto;
   sigRepintar();sigEstado();
 }
 function wireMeta(){
-  const map = { mNumero:"numero", mFecha:"fecha", mCliente:"cliente", mEds:"eds", mCiudad:"ciudad", mTecnico:"tecnico", mCargo:"cargo", mWhatsApp:"whatsapp", mNotas:"notas" };
+  const map = { mNumero:"numero", mFecha:"fecha", mCliente:"cliente", mEds:"eds", mCiudad:"ciudad", mTecnico:"tecnico", mCargo:"cargo", mDocFirma:"docFirma", mNit:"nit", mDireccion:"direccion", mTelefono:"telefono", mCorreo:"correo", mContacto:"contacto", mWhatsApp:"whatsapp", mNotas:"notas" };
   Object.entries(map).forEach(([elId,key])=>{
-    $(elId).addEventListener("input", e=>{ state.meta[key]=e.target.value; saveState(); if(key==="tecnico"||key==="cargo")sigEstado(); });
+    $(elId).addEventListener("input", e=>{ state.meta[key]=e.target.value; saveState(); if(key==="tecnico"||key==="cargo"||key==="docFirma")sigEstado(); });
   });
 }
 function syncEmpresa(){
@@ -760,8 +789,13 @@ $("copyBtn").addEventListener("click", async ()=>{
     `Contacto: ${state.empresa.celular} · ${state.empresa.correo}`,
     `Cotización: ${state.meta.numero}   Fecha: ${state.meta.fecha}`,
     state.meta.cliente ? `Cliente: ${state.meta.cliente}` : null,
+    state.meta.nit ? `NIT: ${state.meta.nit}` : null,
     state.meta.eds ? `EDS: ${state.meta.eds}` : null,
     state.meta.ciudad ? `Ciudad: ${state.meta.ciudad}` : null,
+    state.meta.direccion ? `Dirección: ${state.meta.direccion}` : null,
+    state.meta.telefono ? `Teléfono: ${state.meta.telefono}` : null,
+    state.meta.correo ? `Correo: ${state.meta.correo}` : null,
+    state.meta.contacto ? `Contacto: ${state.meta.contacto}` : null,
     "",
     `Servicio por horas (${state.horas}): ${money.format(r.valorHoras)}`,
     r.valorHorasAdicionales>0 ? `Horas adicionales (${state.horasAdicionales} × ${money.format(state.tarifaHoraAdicional)}): ${money.format(r.valorHorasAdicionales)}` : null,
@@ -836,14 +870,18 @@ function sigRepintar(){
   sigLimpiarLienzo();
   const src=state.firma&&state.firma.img;if(!src)return;
   const im=new Image();
-  im.onload=()=>{if(sigDibujando)return;const m=16*sigDPR(),s=Math.min((sigPad.width-2*m)/im.width,(sigPad.height-2*m-40*sigDPR())/im.height,2),w=im.width*s,h=im.height*s;sigCtx.drawImage(im,(sigPad.width-w)/2,Math.max(m/2,(sigPad.height-40*sigDPR()-h)/2),w,h);};
+  im.onload=()=>{if(sigDibujando)return;const m=16*sigDPR(),pie=34*sigDPR(),s=Math.min((sigPad.width-2*m)/im.width,(sigPad.height-2*m-pie)/im.height,2),w=im.width*s,h=im.height*s;sigCtx.drawImage(im,(sigPad.width-w)/2,Math.max(m/2,(sigPad.height-pie-h)/2),w,h);};
   im.src=src;
 }
 function sigEstado(){
   const tiene=!!(state.firma&&state.firma.img),nombre=String(state.meta.tecnico||"").trim(),cargo=String(state.meta.cargo||"").trim();
   $("sigBox").classList.toggle("signed",tiene);if(!tiene)$("sigBox").classList.remove("tinta");
   const n=$("sigNombre");n.textContent=nombre||"Escriba el nombre del técnico en «Datos de la cotización»";n.classList.toggle("vacio",!nombre);
-  $("sigCap").textContent=[nombre,cargo].filter(Boolean).join(" · ");
+  const doc=String(state.meta.docFirma||"").trim();
+  $("sigIdNombre").textContent=nombre||"—";$("sigIdCargo").textContent=cargo;
+  $("sigIdDoc").textContent=doc;$("sigIdDocRow").style.display=doc?"":"none";
+  $("sigIdEmpresa").textContent=`${state.empresa.razon} · NIT ${state.empresa.nit}`;
+  $("sigIdFecha").textContent=tiene&&state.firma.momento?`Firmado en pantalla: ${sigFechaTxt(state.firma.momento)}`:"Pendiente de firma";
   const st=$("sigStatus");st.classList.toggle("ok",tiene);
   st.textContent=tiene?`✔ Firma lista${state.firma.momento?" · "+sigFechaTxt(state.firma.momento):""}`:"Sin firma: firme en el recuadro";
   let ultima=false;try{ultima=!tiene&&!!localStorage.getItem(SIG_LAST_KEY);}catch(_){}
@@ -922,10 +960,25 @@ async function asegurarJsPDF(){
   for(const src of fuentes){try{await cargarScript(src);if(window.jspdf?.jsPDF)return;}catch(_){}}
   throw new Error("No se pudo cargar el motor PDF. Revise Internet o publique la aplicación en GitHub Pages.");
 }
+/* Datos del cliente en el PDF: filas ordenadas, solo se imprimen los datos presentes. */
+function pdfBloqueCliente(doc,y,m){
+  const cel=(t,v,full)=>({t,v,full:!!full});
+  const celdas=[cel("Fecha",m.fecha||"—"),m.nit?cel("NIT",m.nit):null,cel("Cliente",m.cliente||"—",1),cel("EDS",m.eds||"—"),cel("Ciudad",m.ciudad||"—"),m.direccion?cel("Dirección",m.direccion,1):null,m.telefono?cel("Teléfono",m.telefono):null,m.contacto?cel("Contacto",m.contacto):null,m.correo?cel("Correo",m.correo,1):null,cel("Técnico",m.tecnico||"—")].filter(Boolean);
+  const filas=[];let par=[];
+  celdas.forEach(c=>{if(c.full){if(par.length){filas.push(par);par=[];}filas.push([c]);}else{par.push(c);if(par.length===2){filas.push(par);par=[];}}});
+  if(par.length)filas.push(par);
+  const rh=7.6,hh=filas.length*rh+6;
+  doc.setDrawColor(205);doc.setLineWidth(.3);doc.roundedRect(14,y,182,hh,2,2);doc.setFontSize(9);doc.setTextColor(20);
+  filas.forEach((fila,ri)=>fila.forEach((c,ci)=>{
+    const xx=18+(c.full?0:ci*91),yy=y+7+ri*rh,w=c.full?150:62;
+    doc.setFont("helvetica","bold");doc.text(c.t+":",xx,yy);doc.setFont("helvetica","normal");doc.text(doc.splitTextToSize(String(c.v),w)[0],xx+22,yy);
+  }));
+  return y+hh+8;
+}
 /* Bloque de firmas del PDF: dos recuadros alineados (elaboró / cliente). Devuelve la nueva posición vertical. */
 function pdfBloqueFirmas(doc,y){
-  const navy=[13,26,49],gray=[85,95,110],xL=14,xR=108,w=88,bh=30,f=state.firma||{},m=state.meta;
-  if(y+56>284){
+  const navy=[13,26,49],gray=[85,95,110],xL=14,xR=108,w=88,bh=64,zh=31,f=state.firma||{},m=state.meta;
+  if(y+bh+10>284){
     /* No cabe: nueva página con referencia al documento para que la firma no quede huérfana. */
     doc.addPage();y=18;doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(...navy);
     doc.text(doc.splitTextToSize(`COTIZACIÓN ${m.numero||"—"} · ${m.cliente||"—"}`,130)[0],14,y);
@@ -934,18 +987,26 @@ function pdfBloqueFirmas(doc,y){
   }
   doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.setTextColor(...navy);
   doc.text("ELABORÓ — FIRMA DE QUIEN COTIZA",xL,y);doc.text("ACEPTADO — CLIENTE",xR,y);y+=3;
+  /* Dos recuadros iguales: arriba la zona de firma con su línea; abajo el texto de firma. */
   doc.setDrawColor(185);doc.setLineWidth(.3);doc.roundedRect(xL,y,w,bh,2,2);doc.roundedRect(xR,y,w,bh,2,2);
-  if(f.img){try{const p=doc.getImageProperties(f.img),mw=w-14,mh=bh-12;let iw=mw,ih=iw*p.height/p.width;if(ih>mh){ih=mh;iw=ih*p.width/p.height;}doc.addImage(f.img,"PNG",xL+(w-iw)/2,y+2+(mh-ih)/2,iw,ih);}catch(e){console.error(e);}}
-  doc.setDrawColor(70);doc.setLineWidth(.35);doc.line(xL+7,y+bh-8,xL+w-7,y+bh-8);doc.line(xR+7,y+bh-8,xR+w-7,y+bh-8);
+  doc.setFillColor(243,246,251);doc.rect(xL+.3,y+zh+6.2,w-.6,bh-zh-6.5,"F");doc.rect(xR+.3,y+zh+6.2,w-.6,bh-zh-6.5,"F");
+  doc.setDrawColor(215);doc.setLineWidth(.25);doc.line(xL+.3,y+zh+6.2,xL+w-.3,y+zh+6.2);doc.line(xR+.3,y+zh+6.2,xR+w-.3,y+zh+6.2);
+  if(f.img){try{const p=doc.getImageProperties(f.img),mw=w-14,mh=zh-4;let iw=mw,ih=iw*p.height/p.width;if(ih>mh){ih=mh;iw=ih*p.width/p.height;}doc.addImage(f.img,"PNG",xL+(w-iw)/2,y+1.5+(mh-ih)/2,iw,ih);}catch(e){console.error(e);}}
+  doc.setDrawColor(70);doc.setLineWidth(.35);doc.line(xL+7,y+zh,xL+w-7,y+zh);doc.line(xR+7,y+zh,xR+w-7,y+zh);
   doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(...gray);
-  doc.text("Firma",xL+w/2,y+bh-4,{align:"center"});doc.text("Firma y sello",xR+w/2,y+bh-4,{align:"center"});
-  y+=bh+6;
-  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(...navy);doc.text(doc.splitTextToSize(m.tecnico||"Técnico responsable",w)[0],xL,y);
-  doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(40);if(m.cargo)doc.text(doc.splitTextToSize(m.cargo,w)[0],xL,y+5);
-  doc.setFontSize(7.5);doc.setTextColor(...gray);if(f.momento)doc.text("Firmado en pantalla: "+sigFechaTxt(f.momento),xL,y+10);
-  doc.setFontSize(8.5);doc.setTextColor(40);doc.setDrawColor(150);doc.setLineWidth(.25);
-  [["Nombre:",y-1],["C.C. / NIT:",y+6],["Fecha:",y+13]].forEach(([t,yy])=>{doc.text(t,xR,yy);doc.line(xR+22,yy+.8,xR+w,yy+.8);});
-  return y+17;
+  doc.text("Firma",xL+w/2,y+zh+3.8,{align:"center"});doc.text("Firma y sello",xR+w/2,y+zh+3.8,{align:"center"});
+  /* Texto de firma (izquierda): nombre, cargo, C.C., empresa y fecha/hora, centrado. */
+  let ty=y+zh+11.5;const cx=xL+w/2;
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(...navy);doc.text(doc.splitTextToSize(m.tecnico||"Técnico responsable",w-8)[0],cx,ty,{align:"center"});ty+=4.8;
+  doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(40);
+  if(m.cargo){doc.text(doc.splitTextToSize(m.cargo,w-8)[0],cx,ty,{align:"center"});ty+=4.3;}
+  if(m.docFirma){doc.text("C.C. "+m.docFirma,cx,ty,{align:"center"});ty+=4.3;}
+  doc.setFontSize(7.5);doc.setTextColor(...gray);doc.text(doc.splitTextToSize(`${state.empresa.razon} · NIT ${state.empresa.nit}`,w-8)[0],cx,ty,{align:"center"});ty+=3.9;
+  if(f.momento){doc.setTextColor(47,122,90);doc.setFont("helvetica","bold");doc.text("Firmado en pantalla: "+sigFechaTxt(f.momento),cx,ty,{align:"center"});}
+  /* Datos del cliente (derecha): campos para diligenciar a mano. */
+  doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(40);doc.setDrawColor(150);doc.setLineWidth(.25);
+  [["Nombre:",y+zh+11.5],["C.C. / NIT:",y+zh+18.3],["Fecha:",y+zh+25.1]].forEach(([t,yy])=>{doc.text(t,xR+6,yy);doc.line(xR+26,yy+.8,xR+w-6,yy+.8);});
+  return y+bh+6;
 }
 function crearPDFBlob(){
   if(!window.jspdf?.jsPDF)throw new Error("El motor PDF todavía no está disponible.");
@@ -954,8 +1015,7 @@ function crearPDFBlob(){
   doc.setFillColor(...navy);doc.rect(0,0,210,39,"F");const logo=logoDataURL();if(logo){doc.addImage(logo,"JPEG",14,6,28,28);}else{doc.setFillColor(6,16,29);doc.setDrawColor(102,223,255);doc.setLineWidth(1);doc.circle(28,20,13,"FD");doc.setTextColor(124,232,255);doc.setFont("helvetica","bold");doc.setFontSize(23);doc.text("S",28,27,{align:"center"});}
   doc.setTextColor(255);doc.setFont("helvetica","bold");doc.setFontSize(16);doc.text(state.empresa.razon,48,14);doc.setFontSize(8.5);doc.setFont("helvetica","normal");doc.text(`NIT ${state.empresa.nit} · ${state.empresa.celular} · ${state.empresa.correo}`,48,20);doc.text(state.empresa.direccion,48,25);
   doc.setFont("helvetica","bold");doc.text(`COTIZACIÓN ${m.numero||"—"}`,196,31,{align:"right"});doc.setTextColor(20);y=49;
-  const info=[["Fecha",m.fecha||"—"],["Cliente",m.cliente||"—"],["EDS",m.eds||"—"],["Ciudad",m.ciudad||"—"],["Técnico",m.tecnico||"—"]];
-  doc.setDrawColor(205);doc.roundedRect(14,y,182,30,2,2);doc.setFontSize(9);info.forEach((x,i)=>{const col=i%2,row=Math.floor(i/2),xx=18+col*91,yy=y+7+row*8;doc.setFont("helvetica","bold");doc.text(x[0]+":",xx,yy);doc.setFont("helvetica","normal");doc.text(doc.splitTextToSize(String(x[1]),65)[0],xx+19,yy);});y+=38;
+  y=pdfBloqueCliente(doc,y,m);
   const rows=[];if(r.valorHoras>0)rows.push([`Servicio técnico (${state.horas} h)`,"1",money.format(r.valorHoras)]);if(r.valorHorasAdicionales>0)rows.push([`Horas adicionales (${state.horasAdicionales} h × ${money.format(state.tarifaHoraAdicional)})`,String(state.horasAdicionales),money.format(r.valorHorasAdicionales)]);
   state.items.filter(it=>int(it.cantidad)>0).forEach(it=>rows.push([`${it.nombre} — ${money.format(num(it.tarifa))} c/u`,String(int(it.cantidad)),money.format(num(it.tarifa)*int(it.cantidad))]));
   if(r.valorViaje>0)rows.push([`Viaje a ${state.viaje.destino||"destino"} — ${state.viaje.kmFacturables} km × ${money.format(state.viaje.tarifaKm)}`,`${state.viaje.kmFacturables} km`,money.format(r.valorViaje)]);if(!rows.length)rows.push(["Cotización sin conceptos valorizados","—",money.format(0)]);
@@ -1018,9 +1078,14 @@ function renderPrintDoc(){
       </div>
     </div>
     <div class="p-client">
-      <div><b>Cliente:</b> ${esc(m.cliente||"—")}</div>
+      <div style="grid-column:1/-1"><b>Cliente:</b> ${esc(m.cliente||"—")}</div>
+      ${m.nit?`<div><b>NIT:</b> ${esc(m.nit)}</div>`:""}
       <div><b>EDS:</b> ${esc(m.eds||"—")}</div>
       <div><b>Ciudad:</b> ${esc(m.ciudad||"—")}</div>
+      ${m.direccion?`<div style="grid-column:1/-1"><b>Dirección:</b> ${esc(m.direccion)}</div>`:""}
+      ${m.telefono?`<div><b>Teléfono:</b> ${esc(m.telefono)}</div>`:""}
+      ${m.contacto?`<div><b>Contacto:</b> ${esc(m.contacto)}</div>`:""}
+      ${m.correo?`<div style="grid-column:1/-1"><b>Correo:</b> ${esc(m.correo)}</div>`:""}
       <div><b>Técnico:</b> ${esc(m.tecnico||"—")}</div>
     </div>
     <table class="p-table">
@@ -1040,19 +1105,29 @@ function renderPrintDoc(){
     <div class="p-signs">
       <div>
         <div class="p-sign-title">ELABORÓ — FIRMA DE QUIEN COTIZA</div>
-        <div class="p-sign-box">${state.firma&&state.firma.img?`<img src="${state.firma.img}" alt="Firma de quien elabora">`:""}</div>
-        <div class="p-sign-cap">Firma</div>
-        <div class="p-sign-name">${esc(m.tecnico||"Técnico responsable")}</div>
-        ${m.cargo?`<div class="p-sign-meta">${esc(m.cargo)}</div>`:""}
-        ${state.firma&&state.firma.momento?`<div class="p-sign-meta" style="color:#777">Firmado en pantalla: ${esc(sigFechaTxt(state.firma.momento))}</div>`:""}
+        <div class="p-sign-card">
+          <div class="p-sign-box">${state.firma&&state.firma.img?`<img src="${state.firma.img}" alt="Firma de quien elabora">`:""}</div>
+          <div class="p-sign-id" style="text-align:center">
+            <div class="p-sign-cap">Firma</div>
+            <div class="p-sign-name">${esc(m.tecnico||"Técnico responsable")}</div>
+            ${m.cargo?`<div class="p-sign-meta">${esc(m.cargo)}</div>`:""}
+            ${m.docFirma?`<div class="p-sign-meta">C.C. ${esc(m.docFirma)}</div>`:""}
+            <div class="p-sign-meta" style="color:#777;font-size:9.5px">${esc(state.empresa.razon)} · NIT ${esc(state.empresa.nit)}</div>
+            ${state.firma&&state.firma.momento?`<div class="p-sign-meta" style="color:#2f7a5a;font-weight:700;font-size:9.5px">Firmado en pantalla: ${esc(sigFechaTxt(state.firma.momento))}</div>`:""}
+          </div>
+        </div>
       </div>
       <div>
         <div class="p-sign-title">ACEPTADO — CLIENTE</div>
-        <div class="p-sign-box"></div>
-        <div class="p-sign-cap">Firma y sello</div>
-        <div class="p-sign-field">Nombre:<span></span></div>
-        <div class="p-sign-field">C.C. / NIT:<span></span></div>
-        <div class="p-sign-field">Fecha:<span></span></div>
+        <div class="p-sign-card">
+          <div class="p-sign-box"></div>
+          <div class="p-sign-id">
+            <div class="p-sign-cap" style="text-align:center">Firma y sello</div>
+            <div class="p-sign-field">Nombre:<span></span></div>
+            <div class="p-sign-field">C.C. / NIT:<span></span></div>
+            <div class="p-sign-field">Fecha:<span></span></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="p-foot">${esc(state.empresa.razon)} · NIT ${esc(state.empresa.nit)} · ${esc(state.empresa.celular)} · Valores en pesos colombianos (COP)</div>
@@ -1091,5 +1166,6 @@ wireEmpresa();
   console.info("Autopruebas de cálculo:", ok?"OK ✅":"ERROR ❌");
 })();
 </script>
+<script src="voz.js?v=140" defer></script>
 </body>
 </html>

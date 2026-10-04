@@ -17,6 +17,7 @@ El logotipo, los estilos y la lógica están integrados en el HTML. La aplicaci�
 - Descuento, IVA y total automático.
 - Generación de PDF con bloque de firmas alineado (firma manuscrita capturada en pantalla de quien elabora, con nombre, cargo, fecha y hora; recuadro para firma y sello del cliente).
 - Recuadro de firma en pantalla (dedo, lápiz o mouse), obligatorio para generar el PDF, imprimir o enviar por WhatsApp.
+- **Asistente de voz con IA (v1.4.0)**: botón flotante 🎙 en la pantalla. Dicte "cliente…, NIT…, estación…, ciudad…, teléfono…, correo…, dirección…, tres horas, dos sondas, viaje a…" y cada dato se coloca ordenado en su caja (NIT con dígito de verificación, teléfonos y direcciones formateados). Diga "busca en internet el NIT y el teléfono de la estación …" para que se busquen y distribuyan los datos. Con una clave de API de Claude (⚙ en el panel, se guarda solo en el dispositivo) el motor entiende dictados complejos y busca en la web; sin clave usa el motor local y OpenStreetMap (dirección/teléfono; el NIT requiere IA). Comandos: "deshacer", "generar PDF", "enviar por WhatsApp". Verifique siempre los datos encontrados.
 - Envío por WhatsApp al número del cliente: en la app Android (v1.2.0) abre el chat de ese número con el PDF ya adjunto, solo falta presionar Enviar. En el navegador abre el chat del número y deja el PDF descargado para adjuntarlo (los navegadores no permiten adjuntar archivos por enlace).
 - Importación y exportación de cotizaciones en JSON.
 - Almacenamiento local en cada navegador.

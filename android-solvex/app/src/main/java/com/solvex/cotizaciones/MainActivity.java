@@ -2,12 +2,19 @@ package com.solvex.cotizaciones;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.Manifest;
 import android.content.ClipData;
+import android.content.pm.PackageManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.util.Base64;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -30,9 +37,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=130";
+    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=140";
     private static final int CREATE_PDF_REQUEST = 4102;
-    private static final int VOICE_REQUEST = 4201;
+    private static final int MIC_REQUEST = 4301;
 
     private WebView webView;
     private byte[] pendingPdfBytes;
@@ -67,7 +74,13 @@ public class MainActivity extends Activity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return false;
+                Uri u = request.getUrl();
+                String host = u.getHost() == null ? "" : u.getHost();
+                String scheme = u.getScheme() == null ? "" : u.getScheme();
+                boolean own = host.equals("jebernalc.github.io");
+                if (own || scheme.equals("blob") || scheme.equals("data") || scheme.equals("about")) return false;
+                try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) { }
+                return true;
             }
 
             @Override
@@ -75,7 +88,6 @@ public class MainActivity extends Activity {
                 super.onPageFinished(view, url);
                 if (url != null && url.contains("jebernalc.github.io/miprimerrepositorio")) {
                     installNativePdfHandlers();
-                    installVoiceAssistant();
                 }
             }
         });
@@ -101,50 +113,127 @@ public class MainActivity extends Activity {
         webView.evaluateJavascript(js, null);
     }
 
-    private void installVoiceAssistant() {
-        String js = "(function(){" +
-                "if(window.__solvexVoiceV111)return;window.__solvexVoiceV111=true;" +
-                "const defs=[" +
-                "{key:'numero',id:'mNumero',a:['número de cotización','numero de cotización','número','numero']}," +
-                "{key:'fecha',id:'mFecha',a:['fecha']}," +
-                "{key:'cliente',id:'mCliente',a:['cliente','razón social','razon social']}," +
-                "{key:'eds',id:'mEds',a:['estación de servicio','estacion de servicio','eds','estación','estacion']}," +
-                "{key:'ciudad',id:'mCiudad',a:['ciudad','municipio']}," +
-                "{key:'tecnico',id:'mTecnico',a:['técnico responsable','tecnico responsable','técnico','tecnico']}," +
-                "{key:'whatsapp',id:'mWhatsApp',a:['whatsapp del cliente','whatsapp','teléfono','telefono','celular']}," +
-                "{key:'notas',id:'mNotas',a:['observaciones','observación','observacion','notas','nota']}];" +
-                "let lastField='';" +
-                "document.addEventListener('focusin',e=>{if(defs.some(d=>d.id===e.target.id))lastField=e.target.id;});" +
-                "function clean(v){return String(v||'').replace(/^[\\s,:;.-]+|[\\s,:;.-]+$/g,'').trim();}" +
-                "function setField(id,v){const el=document.getElementById(id);if(!el||!v)return false;if(id==='mFecha'){const l=v.toLowerCase();if(l==='hoy'){const d=new Date();v=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}}if(id==='mWhatsApp')v=v.replace(/[^0-9+]/g,'');el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return true;}" +
-                "function markers(text){const lower=text.toLowerCase();const out=[];defs.forEach(d=>d.a.forEach(a=>{let p=0;while((p=lower.indexOf(a,p))!==-1){out.push({i:p,e:p+a.length,id:d.id,key:d.key,a:a});p+=a.length;}}));out.sort((x,y)=>x.i-y.i||(y.e-y.i)-(x.e-x.i));const f=[];out.forEach(m=>{if(!f.some(x=>m.i>=x.i&&m.i<x.e))f.push(m);});return f;}" +
-                "window.__solvexApplyVoiceTranscript=function(text){try{text=clean(text);if(!text)return toast('No se reconoció texto','err');const ms=markers(text);let count=0;if(ms.length){ms.forEach((m,idx)=>{let start=m.e;let end=idx+1<ms.length?ms[idx+1].i:text.length;let v=clean(text.substring(start,end).replace(/^(es|igual a|corresponde a)\\s+/i,''));if(v&&setField(m.id,v))count++;});}else if(lastField){if(setField(lastField,text))count=1;}else{if(setField('mNotas',text))count=1;}if(typeof saveState==='function')saveState();if(typeof render==='function')render();toast(count>1?'Asistente completó '+count+' campos':'Asistente completó el campo');}catch(e){console.error(e);toast('No pude distribuir el dictado: '+(e.message||e),'err');}};" +
-                "const style=document.createElement('style');style.textContent='#solvexVoiceBtn{position:fixed;right:18px;bottom:82px;z-index:9999;width:64px;height:64px;border:0;border-radius:50%;background:linear-gradient(135deg,#25c8ef,#2f60dd);color:white;font-size:29px;box-shadow:0 10px 28px rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center}#solvexVoiceBtn:active{transform:scale(.94)}#solvexVoiceHint{position:fixed;right:18px;bottom:153px;z-index:9998;background:#0d1a31;color:#eef6ff;border:1px solid #25c8ef;border-radius:10px;padding:7px 10px;font-size:11px;box-shadow:0 8px 20px rgba(0,0,0,.28)}';document.head.appendChild(style);" +
-                "const hint=document.createElement('div');hint.id='solvexVoiceHint';hint.textContent='Asistente de voz';document.body.appendChild(hint);" +
-                "const b=document.createElement('button');b.id='solvexVoiceBtn';b.type='button';b.setAttribute('aria-label','Asistente de voz SOLVEX');b.textContent='🎙️';b.addEventListener('click',()=>{toast('Escuchando… diga cliente, EDS, ciudad, técnico, WhatsApp u observaciones');AndroidVoice.startListening();});document.body.appendChild(b);" +
-                "})();";
-        webView.evaluateJavascript(js, null);
+    /* ---------- Voz nativa continua (SpeechRecognizer) ---------- */
+    private SpeechRecognizer recognizer;
+    private boolean wantListening = false;
+    private int voiceErrors = 0;
+    private final Handler voiceHandler = new Handler(Looper.getMainLooper());
+
+    private void voiceEvent(String evt, String text) {
+        runOnUiThread(() -> {
+            if (webView == null) return;
+            webView.evaluateJavascript("if(window.solvexVoz&&window.solvexVoz.nativo)window.solvexVoz.nativo(" + JSONObject.quote(evt) + "," + JSONObject.quote(text == null ? "" : text) + ");", null);
+        });
+    }
+
+    private void startRecognizer() {
+        if (!wantListening) return;
+        try {
+            if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+                wantListening = false;
+                voiceEvent("error", "Este dispositivo no tiene reconocimiento de voz (instale o active Google / Servicios de voz).");
+                return;
+            }
+            if (recognizer == null) {
+                recognizer = SpeechRecognizer.createSpeechRecognizer(this);
+                recognizer.setRecognitionListener(new RecognitionListener() {
+                    @Override public void onReadyForSpeech(Bundle params) { voiceErrors = 0; voiceEvent("listo", ""); }
+                    @Override public void onBeginningOfSpeech() { }
+                    @Override public void onRmsChanged(float rmsdB) { }
+                    @Override public void onBufferReceived(byte[] buffer) { }
+                    @Override public void onEndOfSpeech() { }
+                    @Override public void onEvent(int eventType, Bundle params) { }
+                    @Override public void onPartialResults(Bundle partial) {
+                        ArrayList<String> r = partial == null ? null : partial.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                        if (r != null && !r.isEmpty()) voiceEvent("parcial", r.get(0));
+                    }
+                    @Override public void onResults(Bundle results) {
+                        ArrayList<String> r = results == null ? null : results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                        if (r != null && !r.isEmpty() && r.get(0) != null && !r.get(0).trim().isEmpty()) voiceEvent("final", r.get(0));
+                        restartSoon(250);
+                    }
+                    @Override public void onError(int error) {
+                        if (!wantListening) return;
+                        if (error == SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS) {
+                            wantListening = false;
+                            voiceEvent("error", "Falta el permiso del micrófono. Actívelo en Ajustes > Aplicaciones > SOLVEX > Permisos.");
+                            return;
+                        }
+                        if (error == SpeechRecognizer.ERROR_CLIENT) { restartSoon(600); return; }
+                        if (error == SpeechRecognizer.ERROR_NETWORK || error == SpeechRecognizer.ERROR_NETWORK_TIMEOUT || error == SpeechRecognizer.ERROR_SERVER) {
+                            voiceErrors++;
+                            if (voiceErrors >= 3) { wantListening = false; voiceEvent("error", "El reconocimiento de voz necesita Internet o el paquete de voz sin conexión en español."); return; }
+                        }
+                        if (error == SpeechRecognizer.ERROR_RECOGNIZER_BUSY) { restartSoon(900); return; }
+                        // sin voz / sin coincidencia: seguir escuchando
+                        restartSoon(error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT ? 150 : 700);
+                    }
+                });
+            }
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-CO");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "es-CO");
+            intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+            intent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 2500L);
+            recognizer.startListening(intent);
+        } catch (Exception e) {
+            wantListening = false;
+            voiceEvent("error", "No se pudo iniciar la voz: " + safeMessage(e));
+        }
+    }
+
+    private void restartSoon(long ms) {
+        voiceHandler.postDelayed(() -> {
+            if (!wantListening) { voiceEvent("fin", ""); return; }
+            try { if (recognizer != null) recognizer.cancel(); } catch (Exception ignored) { }
+            startRecognizer();
+        }, ms);
+    }
+
+    private void stopRecognizer() {
+        wantListening = false;
+        voiceHandler.removeCallbacksAndMessages(null);
+        try { if (recognizer != null) { recognizer.cancel(); recognizer.destroy(); } } catch (Exception ignored) { }
+        recognizer = null;
+        voiceEvent("fin", "");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MIC_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (wantListening) startRecognizer();
+            } else {
+                wantListening = false;
+                voiceEvent("error", "Sin permiso de micrófono no puedo escuchar. Puede escribir el dictado en el recuadro del asistente.");
+            }
+        }
     }
 
     public class AndroidVoiceBridge {
         @JavascriptInterface
         public void startListening() {
             runOnUiThread(() -> {
-                try {
-                    Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-CO");
-                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "es-CO");
-                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Asistente SOLVEX: dicte los datos de la cotización");
-                    intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-                    startActivityForResult(intent, VOICE_REQUEST);
-                } catch (ActivityNotFoundException e) {
-                    notifyJs("Este dispositivo no tiene un servicio de reconocimiento de voz disponible", true);
-                } catch (Exception e) {
-                    notifyJs("No se pudo iniciar el asistente de voz: " + safeMessage(e), true);
+                wantListening = true;
+                voiceErrors = 0;
+                if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    voiceEvent("permiso", "Autorice el micrófono para dictar.");
+                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, MIC_REQUEST);
+                    return;
                 }
+                startRecognizer();
             });
         }
+
+        @JavascriptInterface
+        public void stopListening() { runOnUiThread(MainActivity.this::stopRecognizer); }
+
+        @JavascriptInterface
+        public boolean isAvailable() { return SpeechRecognizer.isRecognitionAvailable(MainActivity.this); }
     }
 
     public class AndroidPdfBridge {
@@ -253,24 +342,6 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == VOICE_REQUEST) {
-            if (resultCode == RESULT_OK && data != null) {
-                ArrayList<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                if (results != null && !results.isEmpty()) {
-                    String transcript = results.get(0);
-                    String quoted = JSONObject.quote(transcript == null ? "" : transcript);
-                    if (webView != null) {
-                        webView.evaluateJavascript("if(window.__solvexApplyVoiceTranscript)window.__solvexApplyVoiceTranscript(" + quoted + ");", null);
-                    }
-                } else {
-                    notifyJs("No se reconoció ningún texto", true);
-                }
-            } else {
-                notifyJs("Dictado cancelado", false);
-            }
-            return;
-        }
-
         if (requestCode != CREATE_PDF_REQUEST) return;
         if (resultCode == RESULT_OK && data != null && data.getData() != null && pendingPdfBytes != null) {
             Uri uri = data.getData();
@@ -320,10 +391,17 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        if (wantListening) stopRecognizer();
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         if (webView != null) {
             webView.removeJavascriptInterface("AndroidPdf");
             webView.removeJavascriptInterface("AndroidVoice");
+            stopRecognizer();
             webView.destroy();
         }
         super.onDestroy();
