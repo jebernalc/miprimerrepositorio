@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=120";
+    private static final String APP_URL = "https://jebernalc.github.io/miprimerrepositorio/?android=1&v=130";
     private static final int CREATE_PDF_REQUEST = 4102;
     private static final int VOICE_REQUEST = 4201;
 
@@ -90,11 +90,11 @@ public class MainActivity extends Activity {
 
     private void installNativePdfHandlers() {
         String js = "(function(){" +
-                "if(window.__solvexPdfNativeV120)return;window.__solvexPdfNativeV120=true;" +
+                "if(window.__solvexPdfNativeV130)return;window.__solvexPdfNativeV130=true;" +
                 "async function pdfToBase64(){await asegurarJsPDF();const blob=crearPDFBlob();if(!blob||blob.size<100)throw new Error('El PDF generado está vacío');return await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>{const s=String(r.result||'');const p=s.indexOf(',');if(p<0)return reject(new Error('No se pudo codificar el PDF'));resolve(s.substring(p+1));};r.onerror=()=>reject(new Error('No se pudo leer el PDF'));r.readAsDataURL(blob);});}" +
                 "function formatCop(value){try{return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Number(value)||0);}catch(e){return '$ '+String(Number(value)||0);}}" +
-                "async function nativeSavePdf(){try{toast('Generando PDF...');const b64=await pdfToBase64();AndroidPdf.savePdf(b64,nombrePDF());}catch(e){console.error(e);toast(e.message||'No se pudo generar el PDF','err');}}" +
-                "async function nativeSharePdf(){try{toast('Preparando PDF para WhatsApp...');const b64=await pdfToBase64();const r=calcularFactura(state);const total=formatCop(r&&r.total);const tel=(typeof window.telefonoWhatsApp==='function')?window.telefonoWhatsApp(state&&state.meta&&state.meta.whatsapp):'';const crudo=String((state&&state.meta&&state.meta.whatsapp)||'').trim();if(crudo&&!tel){toast('El número de WhatsApp no es válido. Use 10 dígitos (ej. 3001234567) o con indicativo','err');return;}const m='Cotización '+((state&&state.meta&&state.meta.numero)||'SOLVEX')+' por '+total+((state&&state.meta&&state.meta.eds)?' — '+state.meta.eds:'')+'.';AndroidPdf.sharePdf(b64,nombrePDF(),m,tel);}catch(e){console.error(e);toast(e.message||'No se pudo generar o compartir el PDF','err');}}" +
+                "async function nativeSavePdf(){try{if(window.exigirFirma&&!window.exigirFirma())return;toast('Generando PDF...');const b64=await pdfToBase64();AndroidPdf.savePdf(b64,nombrePDF());}catch(e){console.error(e);toast(e.message||'No se pudo generar el PDF','err');}}" +
+                "async function nativeSharePdf(){try{if(window.exigirFirma&&!window.exigirFirma())return;toast('Preparando PDF para WhatsApp...');const b64=await pdfToBase64();const r=calcularFactura(state);const total=formatCop(r&&r.total);const tel=(typeof window.telefonoWhatsApp==='function')?window.telefonoWhatsApp(state&&state.meta&&state.meta.whatsapp):'';const crudo=String((state&&state.meta&&state.meta.whatsapp)||'').trim();if(crudo&&!tel){toast('El número de WhatsApp no es válido. Use 10 dígitos (ej. 3001234567) o con indicativo','err');return;}const m='Cotización '+((state&&state.meta&&state.meta.numero)||'SOLVEX')+' por '+total+((state&&state.meta&&state.meta.eds)?' — '+state.meta.eds:'')+'.';AndroidPdf.sharePdf(b64,nombrePDF(),m,tel);}catch(e){console.error(e);toast(e.message||'No se pudo generar o compartir el PDF','err');}}" +
                 "function replaceButton(id,fn){const b=document.getElementById(id);if(!b)return;const n=b.cloneNode(true);b.parentNode.replaceChild(n,b);n.addEventListener('click',function(ev){ev.preventDefault();fn();});}" +
                 "replaceButton('pdfBtn',nativeSavePdf);replaceButton('whatsappBtn',nativeSharePdf);window.__solvexNativeSavePdf=nativeSavePdf;window.__solvexNativeSharePdf=nativeSharePdf;" +
                 "})();";

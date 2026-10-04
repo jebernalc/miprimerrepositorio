@@ -15,7 +15,8 @@ El logotipo, los estilos y la lógica están integrados en el HTML. La aplicaci�
 - Ítems de instalación y capacitación.
 - Gastos de viaje calculados por kilometraje.
 - Descuento, IVA y total automático.
-- Generación de PDF.
+- Generación de PDF con bloque de firmas alineado (firma manuscrita capturada en pantalla de quien elabora, con nombre, cargo, fecha y hora; recuadro para firma y sello del cliente).
+- Recuadro de firma en pantalla (dedo, lápiz o mouse), obligatorio para generar el PDF, imprimir o enviar por WhatsApp.
 - Envío por WhatsApp al número del cliente: en la app Android (v1.2.0) abre el chat de ese número con el PDF ya adjunto, solo falta presionar Enviar. En el navegador abre el chat del número y deja el PDF descargado para adjuntarlo (los navegadores no permiten adjuntar archivos por enlace).
 - Importación y exportación de cotizaciones en JSON.
 - Almacenamiento local en cada navegador.

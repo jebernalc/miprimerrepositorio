@@ -121,6 +121,24 @@ button{cursor:pointer}
 .apk-card a.apk-btn{background:var(--green);color:#042417;font-weight:900;text-decoration:none;border-radius:11px;padding:12px 18px;white-space:nowrap}
 .apk-card a.apk-btn:hover{filter:brightness(1.08)}
 .in-app .apk-card{display:none}
+/* ---- Firma en pantalla (v1.3.0) ---- */
+.sig-wrap{padding:16px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.sig-grid .sig-name{background:#0b172b;border:1px solid #456387;border-radius:10px;padding:11px 12px;min-height:44px;font-weight:800;color:#fff;overflow-wrap:anywhere}
+.sig-grid .sig-name.vacio{color:#8fa3c4;font-weight:600}
+.sig-box{position:relative;border:2px dashed #6f8fbd;border-radius:14px;background:#fff;overflow:hidden;transition:border-color .2s}
+.sig-box.signed{border-style:solid;border-color:var(--green)}
+#sigPad{display:block;width:100%;height:210px;touch-action:none;cursor:crosshair;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.sig-line{position:absolute;left:18px;right:18px;bottom:46px;border-top:2px solid #9aa9c2;pointer-events:none}
+.sig-x{position:absolute;left:20px;bottom:52px;color:#9aa9c2;font:700 22px/1 sans-serif;pointer-events:none}
+.sig-hint{position:absolute;left:0;right:0;top:0;bottom:56px;display:flex;align-items:center;justify-content:center;color:#7d8da8;font-weight:700;font-size:14px;text-align:center;padding:0 24px;pointer-events:none}
+.sig-box.signed .sig-hint,.sig-box.tinta .sig-hint{display:none}
+.sig-cap{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:12px;line-height:1.35;color:#3d4a63;font-weight:700;pointer-events:none;padding:0 12px}
+.sig-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.sig-status{flex:1 1 220px;font-size:13px;color:var(--muted)}.sig-status.ok{color:#7be8b9;font-weight:800}
+.sig-note{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
+.sig-alert{animation:sigAlert .55s ease 3}@keyframes sigAlert{50%{box-shadow:0 0 0 5px rgba(255,107,107,.65)}}
+@media(max-width:560px){.sig-grid{grid-template-columns:1fr}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0b2a1f;border:1px solid var(--green);color:#c9ffe9;
   padding:12px 18px;border-radius:12px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -178,8 +196,15 @@ button{cursor:pointer}
   .p-notes{margin-top:18px;font-size:11px;color:#333}
   .p-route{margin:0 0 14px;border:1px solid #ccc;border-radius:8px;padding:10px 12px;font-size:11px}.p-route-title{font-weight:800;color:#0d1a31;margin-bottom:5px}
   .p-notes .pn-title{font-weight:800;color:#0d1a31;margin-bottom:4px}
-  .p-signs{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:44px}
-  .p-sign-line{border-top:1px solid #333;padding-top:6px;font-size:11px;text-align:center;color:#333}
+  .p-signs{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:28px;break-inside:avoid;page-break-inside:avoid}
+  .p-sign-title{font-size:10px;font-weight:800;color:#0d1a31;letter-spacing:.05em;margin-bottom:6px}
+  .p-sign-box{position:relative;height:96px;border:1px solid #b5b5b5;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:6px 12px 22px}
+  .p-sign-box::after{content:"";position:absolute;left:14px;right:14px;bottom:20px;border-top:1px solid #333}
+  .p-sign-box img{max-width:100%;max-height:100%;object-fit:contain}
+  .p-sign-cap{text-align:center;font-size:9px;color:#777;margin-top:3px}
+  .p-sign-name{font-size:12px;font-weight:800;color:#0d1a31;margin-top:8px}
+  .p-sign-meta{font-size:10.5px;color:#444;margin-top:2px}
+  .p-sign-field{display:flex;align-items:flex-end;gap:6px;font-size:11px;color:#333;margin-top:11px}.p-sign-field span{flex:1;border-bottom:1px solid #666;height:12px}
   .p-foot{margin-top:26px;border-top:1px solid #ccc;padding-top:8px;font-size:10px;color:#777;text-align:center}
   @page{margin:14mm}
 }
@@ -300,6 +325,29 @@ button{cursor:pointer}
     </div>
   </section>
 
+  <!-- ✍ FIRMA DE QUIEN ELABORA LA COTIZACIÓN -->
+  <section class="section" id="firmaSection">
+    <div class="section-head head-purple">✍️ FIRMA DE QUIEN ELABORA LA COTIZACIÓN</div>
+    <div class="sig-wrap">
+      <div class="sig-grid">
+        <div class="field"><label>Firmante (campo «Técnico responsable»)</label><div class="sig-name vacio" id="sigNombre">Escriba el nombre del técnico en «Datos de la cotización»</div></div>
+        <div class="field"><label for="mCargo">Cargo del firmante</label><input id="mCargo" type="text" placeholder="Ej. Técnico de servicio" autocomplete="off"></div>
+      </div>
+      <div class="sig-box" id="sigBox">
+        <canvas id="sigPad" aria-label="Recuadro de firma: firme con el dedo, lápiz o mouse"></canvas>
+        <div class="sig-hint" id="sigHint">Firme aquí con el dedo, lápiz o mouse</div>
+        <span class="sig-x" aria-hidden="true">✕</span><div class="sig-line"></div>
+        <div class="sig-cap" id="sigCap"></div>
+      </div>
+      <div class="sig-bar">
+        <div class="sig-status" id="sigStatus" aria-live="polite">Sin firma</div>
+        <button class="action" id="sigLastBtn" type="button" hidden>↩ Usar mi última firma</button>
+        <button class="action ghost-danger" id="sigClearBtn" type="button">🗑 Borrar firma</button>
+      </div>
+      <div class="sig-note">La firma manuscrita capturada en pantalla se imprime en el PDF y en la versión impresa junto al nombre, el cargo y la fecha y hora en que se firmó. Es obligatoria para generar el PDF o enviarlo por WhatsApp.</div>
+    </div>
+  </section>
+
   <!-- ⑤ CONFIGURACIÓN CENTRAL DE PRECIOS -->
   <section class="section tariff-section">
     <div class="section-head head-orange">⑤ CONFIGURACIÓN GENERAL DE PRECIOS 2026</div>
@@ -327,7 +375,7 @@ button{cursor:pointer}
       <input id="fileInput" type="file" accept="application/json,.json" hidden>
     </div>
     <div class="apk-card" id="apkCard">
-      <div class="apk-txt"><strong>📱 App Android SOLVEX Cotizaciones · v1.2.0</strong>Al finalizar la cotización abre WhatsApp directamente en el chat del número del cliente, con el PDF ya adjunto: solo presione Enviar. En el navegador el PDF debe adjuntarse manualmente (📎 → Documento).</div>
+      <div class="apk-txt"><strong>📱 App Android SOLVEX Cotizaciones · v1.3.0</strong>Incluye firma en pantalla en el PDF. Al finalizar la cotización abre WhatsApp directamente en el chat del número del cliente, con el PDF ya adjunto: solo presione Enviar. En el navegador el PDF debe adjuntarse manualmente (📎 → Documento).</div>
       <a class="apk-btn" id="apkLink" href="https://github.com/jebernalc/miprimerrepositorio/releases/latest/download/SOLVEX-Cotizaciones.apk" download>⬇ Descargar APK</a>
     </div>
     <div class="note">Los cambios se guardan automáticamente. La cotización funciona sin servidor; el cálculo de ruta requiere Internet. Si no hay conexión, registre los kilómetros manualmente.</div>
@@ -335,7 +383,7 @@ button{cursor:pointer}
 
   <div class="footer">
     Aplicación local · Un solo archivo HTML · Datos guardados en el navegador<br>
-    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral · v1.2.0
+    SOLVEX SYSTEM J.B. S.A.S. — Ingeniería tecnológica integral · v1.3.0
   </div>
 </main>
 
@@ -385,7 +433,8 @@ let state = crearEstadoInicial();
 
 function crearEstadoInicial(){
   return {
-    meta:{ numero:nuevaCotizacion(), fecha:hoyISO(), cliente:"", eds:"", ciudad:"", tecnico:"", whatsapp:"", notas:"" },
+    meta:{ numero:nuevaCotizacion(), fecha:hoyISO(), cliente:"", eds:"", ciudad:"", tecnico:"", cargo:"Técnico de servicio", whatsapp:"", notas:"" },
+    firma:{ img:"", momento:"" },
     empresa:{...DEFAULT_EMPRESA,pagos:{...DEFAULT_EMPRESA.pagos}},
     horas:0,
     horasAdicionales:0,
@@ -439,9 +488,13 @@ function sanitizarEstado(x){
       eds:    String(m.eds ?? "").slice(0,120),
       ciudad: String(m.ciudad ?? "").slice(0,80),
       tecnico:String(m.tecnico ?? "").slice(0,120),
+      cargo:  String(m.cargo ?? "Técnico de servicio").slice(0,80),
       whatsapp:String(m.whatsapp ?? "").replace(/[^\d+]/g,"").slice(0,20),
       notas:  String(m.notas ?? "").slice(0,600)
     };
+  }
+  if(x.firma&&typeof x.firma==="object"&&typeof x.firma.img==="string"&&x.firma.img.length<600000&&/^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(x.firma.img)){
+    s.firma={img:x.firma.img,momento:/^\d{4}-\d{2}-\d{2}T[\d:.+\-Z]+$/.test(String(x.firma.momento||""))?String(x.firma.momento):""};
   }
   if(Array.isArray(x.items) && x.items.length){
     s.items = x.items.slice(0,40).map(it=>({
@@ -520,11 +573,13 @@ function syncMeta(){
   $("mTecnico").value= state.meta.tecnico;
   $("mWhatsApp").value=state.meta.whatsapp;
   $("mNotas").value  = state.meta.notas;
+  $("mCargo").value  = state.meta.cargo;
+  sigRepintar();sigEstado();
 }
 function wireMeta(){
-  const map = { mNumero:"numero", mFecha:"fecha", mCliente:"cliente", mEds:"eds", mCiudad:"ciudad", mTecnico:"tecnico", mWhatsApp:"whatsapp", mNotas:"notas" };
+  const map = { mNumero:"numero", mFecha:"fecha", mCliente:"cliente", mEds:"eds", mCiudad:"ciudad", mTecnico:"tecnico", mCargo:"cargo", mWhatsApp:"whatsapp", mNotas:"notas" };
   Object.entries(map).forEach(([elId,key])=>{
-    $(elId).addEventListener("input", e=>{ state.meta[key]=e.target.value; saveState(); });
+    $(elId).addEventListener("input", e=>{ state.meta[key]=e.target.value; saveState(); if(key==="tecnico"||key==="cargo")sigEstado(); });
   });
 }
 function syncEmpresa(){
@@ -696,7 +751,7 @@ $("resetAll").addEventListener("click",()=>{
   syncMeta();syncEmpresa();syncTarifas();syncViaje();syncHorasExtras();render();toast("Cotización nueva lista");
 });
 
-$("printBtn").addEventListener("click",()=>{ renderPrintDoc(); window.print(); });
+$("printBtn").addEventListener("click",()=>{ if(!exigirFirma())return; renderPrintDoc(); window.print(); });
 
 $("copyBtn").addEventListener("click", async ()=>{
   const r=calcularFactura(state);
@@ -764,6 +819,97 @@ function toast(msg, kind=""){
   toastTimer=setTimeout(()=>{ t.className="toast"+(kind==="err"?" err":""); }, kind==="err"?6000:3000);
 }
 
+/* ---------------- Firma en pantalla (v1.3.0) ---------------- */
+const SIG_COLOR="#0b1f4a",SIG_LAST_KEY="solvex:ultimaFirma";
+const sigPad=$("sigPad"),sigCtx=sigPad.getContext("2d");
+let sigDibujando=false,sigP1=null,sigP2=null;
+function sigDPR(){return Math.max(1,Math.min(3,window.devicePixelRatio||1));}
+function sigFechaTxt(iso){try{return new Date(iso).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});}catch(_){return "";}}
+function sigAjustar(){
+  const r=sigPad.getBoundingClientRect();if(!r.width||!r.height)return;
+  const d=sigDPR(),w=Math.round(r.width*d),h=Math.round(r.height*d);
+  if(sigPad.width===w&&sigPad.height===h)return;
+  sigPad.width=w;sigPad.height=h;sigRepintar();
+}
+function sigLimpiarLienzo(){sigCtx.setTransform(1,0,0,1,0,0);sigCtx.clearRect(0,0,sigPad.width,sigPad.height);}
+function sigRepintar(){
+  sigLimpiarLienzo();
+  const src=state.firma&&state.firma.img;if(!src)return;
+  const im=new Image();
+  im.onload=()=>{if(sigDibujando)return;const m=16*sigDPR(),s=Math.min((sigPad.width-2*m)/im.width,(sigPad.height-2*m-40*sigDPR())/im.height,2),w=im.width*s,h=im.height*s;sigCtx.drawImage(im,(sigPad.width-w)/2,Math.max(m/2,(sigPad.height-40*sigDPR()-h)/2),w,h);};
+  im.src=src;
+}
+function sigEstado(){
+  const tiene=!!(state.firma&&state.firma.img),nombre=String(state.meta.tecnico||"").trim(),cargo=String(state.meta.cargo||"").trim();
+  $("sigBox").classList.toggle("signed",tiene);if(!tiene)$("sigBox").classList.remove("tinta");
+  const n=$("sigNombre");n.textContent=nombre||"Escriba el nombre del técnico en «Datos de la cotización»";n.classList.toggle("vacio",!nombre);
+  $("sigCap").textContent=[nombre,cargo].filter(Boolean).join(" · ");
+  const st=$("sigStatus");st.classList.toggle("ok",tiene);
+  st.textContent=tiene?`✔ Firma lista${state.firma.momento?" · "+sigFechaTxt(state.firma.momento):""}`:"Sin firma: firme en el recuadro";
+  let ultima=false;try{ultima=!tiene&&!!localStorage.getItem(SIG_LAST_KEY);}catch(_){}
+  $("sigLastBtn").hidden=!ultima;$("sigClearBtn").disabled=!tiene;
+}
+function sigPos(e){const r=sigPad.getBoundingClientRect(),k=sigPad.width/r.width;return{x:(e.clientX-r.left)*k,y:(e.clientY-r.top)*k,p:(e.pointerType==="pen"&&e.pressure>0)?e.pressure:.5};}
+function sigTrazo(a,b,c){
+  sigCtx.strokeStyle=SIG_COLOR;sigCtx.lineCap="round";sigCtx.lineJoin="round";sigCtx.lineWidth=(1.6+2.2*c.p)*sigDPR();
+  sigCtx.beginPath();sigCtx.moveTo((a.x+b.x)/2,(a.y+b.y)/2);sigCtx.quadraticCurveTo(b.x,b.y,(b.x+c.x)/2,(b.y+c.y)/2);sigCtx.stroke();
+}
+function sigConfirmar(){
+  const w=sigPad.width,h=sigPad.height,d=sigDPR();
+  let data;try{data=sigCtx.getImageData(0,0,w,h).data;}catch(_){return;}
+  let x0=w,y0=h,x1=-1,y1=-1;
+  for(let y=0;y<h;y++){const row=y*w*4;for(let x=0;x<w;x++){if(data[row+x*4+3]>24){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}}}
+  if(x1<0||((x1-x0)<28*d&&(y1-y0)<18*d)){
+    const habiaTinta=x1>=0;state.firma={img:"",momento:""};sigLimpiarLienzo();saveState();sigEstado();
+    if(habiaTinta)toast("La firma quedó muy corta. Firme de nuevo.","err");return;
+  }
+  const m=Math.round(6*d);x0=Math.max(0,x0-m);y0=Math.max(0,y0-m);x1=Math.min(w-1,x1+m);y1=Math.min(h-1,y1+m);
+  const cw=x1-x0+1,ch=y1-y0+1,es=Math.min(1,700/cw),c=document.createElement("canvas");
+  c.width=Math.max(1,Math.round(cw*es));c.height=Math.max(1,Math.round(ch*es));
+  c.getContext("2d").drawImage(sigPad,x0,y0,cw,ch,0,0,c.width,c.height);
+  const img=c.toDataURL("image/png");
+  state.firma={img,momento:new Date().toISOString()};
+  try{localStorage.setItem(SIG_LAST_KEY,img);}catch(_){}
+  saveState();sigEstado();
+}
+function sigIniciar(){
+  sigPad.addEventListener("pointerdown",e=>{
+    if(e.pointerType==="mouse"&&e.button!==0)return;
+    e.preventDefault();try{sigPad.setPointerCapture(e.pointerId);}catch(_){}
+    sigAjustar();sigDibujando=true;$("sigBox").classList.add("tinta");
+    sigP1=sigP2=sigPos(e);sigCtx.fillStyle=SIG_COLOR;sigCtx.beginPath();sigCtx.arc(sigP1.x,sigP1.y,(.9+1.1*sigP1.p)*sigDPR(),0,Math.PI*2);sigCtx.fill();
+  });
+  sigPad.addEventListener("pointermove",e=>{
+    if(!sigDibujando)return;e.preventDefault();
+    const c=sigPos(e);sigTrazo(sigP2,sigP1,c);sigP2=sigP1;sigP1=c;
+  });
+  const fin=e=>{if(!sigDibujando)return;sigDibujando=false;try{sigPad.releasePointerCapture(e.pointerId);}catch(_){}sigConfirmar();};
+  ["pointerup","pointercancel","lostpointercapture"].forEach(ev=>sigPad.addEventListener(ev,fin));
+  sigPad.addEventListener("contextmenu",e=>e.preventDefault());
+  $("sigClearBtn").addEventListener("click",()=>{state.firma={img:"",momento:""};sigLimpiarLienzo();saveState();sigEstado();toast("Firma borrada");});
+  $("sigLastBtn").addEventListener("click",()=>{
+    let img="";try{img=localStorage.getItem(SIG_LAST_KEY)||"";}catch(_){}
+    if(!/^data:image\/png;base64,[A-Za-z0-9+\/=]+$/.test(img))return;
+    state.firma={img,momento:new Date().toISOString()};sigRepintar();saveState();sigEstado();toast("Se reutilizó su última firma");
+  });
+  if(window.ResizeObserver)new ResizeObserver(sigAjustar).observe(sigPad);
+  window.addEventListener("resize",sigAjustar);window.addEventListener("orientationchange",()=>setTimeout(sigAjustar,250));
+  sigAjustar();sigRepintar();sigEstado();
+}
+/* Exige nombre y firma antes de generar PDF, imprimir o enviar. La app Android también la invoca. */
+function exigirFirma(){
+  if(!String(state.meta.tecnico||"").trim()){
+    toast("Escriba el nombre del técnico responsable: aparece bajo la firma.","err");
+    const t=$("mTecnico");t.scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>t.focus(),350);return false;
+  }
+  if(!(state.firma&&state.firma.img)){
+    toast("Falta la firma de quien elabora la cotización. Firme en el recuadro.","err");
+    const s=$("firmaSection");s.scrollIntoView({behavior:"smooth",block:"center"});s.classList.remove("sig-alert");void s.offsetWidth;s.classList.add("sig-alert");setTimeout(()=>s.classList.remove("sig-alert"),1900);return false;
+  }
+  return true;
+}
+window.exigirFirma=exigirFirma;
+
 /* ---------------- PDF descargable y WhatsApp ---------------- */
 function nombrePDF(){return `Cotizacion_${(state.meta.numero||"SOLVEX").replace(/[^\w-]+/g,"_")}.pdf`;}
 function logoDataURL(){
@@ -775,6 +921,31 @@ async function asegurarJsPDF(){
   const fuentes=["https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js","https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js","https://unpkg.com/jspdf@4.2.1/dist/jspdf.umd.min.js"];
   for(const src of fuentes){try{await cargarScript(src);if(window.jspdf?.jsPDF)return;}catch(_){}}
   throw new Error("No se pudo cargar el motor PDF. Revise Internet o publique la aplicación en GitHub Pages.");
+}
+/* Bloque de firmas del PDF: dos recuadros alineados (elaboró / cliente). Devuelve la nueva posición vertical. */
+function pdfBloqueFirmas(doc,y){
+  const navy=[13,26,49],gray=[85,95,110],xL=14,xR=108,w=88,bh=30,f=state.firma||{},m=state.meta;
+  if(y+56>284){
+    /* No cabe: nueva página con referencia al documento para que la firma no quede huérfana. */
+    doc.addPage();y=18;doc.setFont("helvetica","bold");doc.setFontSize(9);doc.setTextColor(...navy);
+    doc.text(doc.splitTextToSize(`COTIZACIÓN ${m.numero||"—"} · ${m.cliente||"—"}`,130)[0],14,y);
+    doc.text(`TOTAL ${money.format(calcularFactura(state).total)}`,196,y,{align:"right"});
+    doc.setDrawColor(205);doc.setLineWidth(.3);doc.line(14,y+2.5,196,y+2.5);y+=13;
+  }
+  doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.setTextColor(...navy);
+  doc.text("ELABORÓ — FIRMA DE QUIEN COTIZA",xL,y);doc.text("ACEPTADO — CLIENTE",xR,y);y+=3;
+  doc.setDrawColor(185);doc.setLineWidth(.3);doc.roundedRect(xL,y,w,bh,2,2);doc.roundedRect(xR,y,w,bh,2,2);
+  if(f.img){try{const p=doc.getImageProperties(f.img),mw=w-14,mh=bh-12;let iw=mw,ih=iw*p.height/p.width;if(ih>mh){ih=mh;iw=ih*p.width/p.height;}doc.addImage(f.img,"PNG",xL+(w-iw)/2,y+2+(mh-ih)/2,iw,ih);}catch(e){console.error(e);}}
+  doc.setDrawColor(70);doc.setLineWidth(.35);doc.line(xL+7,y+bh-8,xL+w-7,y+bh-8);doc.line(xR+7,y+bh-8,xR+w-7,y+bh-8);
+  doc.setFont("helvetica","normal");doc.setFontSize(7.5);doc.setTextColor(...gray);
+  doc.text("Firma",xL+w/2,y+bh-4,{align:"center"});doc.text("Firma y sello",xR+w/2,y+bh-4,{align:"center"});
+  y+=bh+6;
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(...navy);doc.text(doc.splitTextToSize(m.tecnico||"Técnico responsable",w)[0],xL,y);
+  doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(40);if(m.cargo)doc.text(doc.splitTextToSize(m.cargo,w)[0],xL,y+5);
+  doc.setFontSize(7.5);doc.setTextColor(...gray);if(f.momento)doc.text("Firmado en pantalla: "+sigFechaTxt(f.momento),xL,y+10);
+  doc.setFontSize(8.5);doc.setTextColor(40);doc.setDrawColor(150);doc.setLineWidth(.25);
+  [["Nombre:",y-1],["C.C. / NIT:",y+6],["Fecha:",y+13]].forEach(([t,yy])=>{doc.text(t,xR,yy);doc.line(xR+22,yy+.8,xR+w,yy+.8);});
+  return y+17;
 }
 function crearPDFBlob(){
   if(!window.jspdf?.jsPDF)throw new Error("El motor PDF todavía no está disponible.");
@@ -792,12 +963,13 @@ function crearPDFBlob(){
   rows.forEach(row=>{const desc=doc.splitTextToSize(row[0],118),h=Math.max(9,desc.length*4.2+3);if(y+h>255){doc.addPage();y=18;}doc.setDrawColor(225);doc.line(14,y+h,196,y+h);doc.text(desc,18,y+5.5);doc.text(row[1],154,y+5.5,{align:"right"});doc.text(row[2],192,y+5.5,{align:"right"});y+=h;});
   y+=5;const totals=[["Subtotal",r.subtotal],[r.descuento>0?`Descuento (${state.descuento}%)`:"Descuento",-r.descuento],[`IVA ${pct(r.ivaRate)}%`,r.iva]];doc.setFontSize(10);totals.forEach(t=>{doc.text(t[0],145,y,{align:"right"});doc.text((t[1]<0?"− ":"")+money.format(Math.abs(t[1])),192,y,{align:"right"});y+=7;});doc.setFillColor(...green);doc.roundedRect(120,y-2,76,12,2,2,"F");doc.setTextColor(255);doc.setFont("helvetica","bold");doc.setFontSize(12);doc.text("TOTAL",125,y+5.5);doc.text(money.format(r.total),192,y+5.5,{align:"right"});doc.setTextColor(...gray);y+=18;
   if(y>248){doc.addPage();y=18;}doc.setDrawColor(205);doc.roundedRect(14,y,182,24,2,2);doc.setTextColor(13,26,49);doc.setFontSize(9);doc.setFont("helvetica","bold");doc.text("MEDIOS Y DATOS DE PAGO",18,y+6);doc.setFont("helvetica","normal");doc.text(`Medios: ${mediosPagoTexto()}`,18,y+12);doc.text(`${state.empresa.banco} · ${state.empresa.tipoCuenta} No. ${state.empresa.cuenta} · Condición: ${state.empresa.condicion}`,18,y+18);y+=31;
-  if(m.notas){if(y>260){doc.addPage();y=18;}doc.setTextColor(20);doc.setFontSize(9);doc.setFont("helvetica","bold");doc.text("Observaciones",14,y);doc.setFont("helvetica","normal");doc.text(doc.splitTextToSize(m.notas,182),14,y+5);}
+  if(m.notas){if(y>260){doc.addPage();y=18;}doc.setTextColor(20);doc.setFontSize(9);doc.setFont("helvetica","bold");doc.text("Observaciones",14,y);doc.setFont("helvetica","normal");const lnNotas=doc.splitTextToSize(m.notas,182);doc.text(lnNotas,14,y+5);y+=5+lnNotas.length*4.2+8;}
+  y=pdfBloqueFirmas(doc,y+2);
   const pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setFontSize(8);doc.setTextColor(...gray);doc.text(`SOLVEX SYSTEM J.B. S.A.S. · Documento generado digitalmente · Página ${p} de ${pages}`,105,290,{align:"center"});}
   return doc.output("blob");
 }
 function forzarDescarga(blob){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=nombrePDF();a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);}
-async function descargarPDF(){try{await asegurarJsPDF();const blob=crearPDFBlob();forzarDescarga(blob);toast("PDF profesional generado y descargado");return blob;}catch(e){console.error(e);toast(e.message,"err");return null;}}
+async function descargarPDF(){if(!exigirFirma())return null;try{await asegurarJsPDF();const blob=crearPDFBlob();forzarDescarga(blob);toast("PDF profesional generado y descargado");return blob;}catch(e){console.error(e);toast(e.message,"err");return null;}}
 /* v1.2.0: número del cliente -> formato internacional sin "+" (Colombia por defecto: 10 dígitos que inician en 3 => 57 + número). Devuelve "" si no es válido. */
 function telefonoWhatsApp(raw){
   let d=String(raw||"").replace(/\D/g,"").replace(/^00/,"");
@@ -806,6 +978,7 @@ function telefonoWhatsApp(raw){
 }
 window.telefonoWhatsApp=telefonoWhatsApp;
 async function compartirWhatsApp(){
+  if(!exigirFirma())return;
   const crudo=String(state.meta.whatsapp||"").trim(),tel=telefonoWhatsApp(crudo);
   if(crudo&&!tel){toast("El número de WhatsApp no es válido. Use 10 dígitos (ej. 3001234567) o con indicativo (ej. 573001234567).","err");return;}
   let blob;try{await asegurarJsPDF();blob=crearPDFBlob();forzarDescarga(blob);}catch(e){console.error(e);toast(e.message,"err");return;}const file=new File([blob],nombrePDF(),{type:"application/pdf"});
@@ -865,14 +1038,29 @@ function renderPrintDoc(){
     <div class="p-route"><div class="p-route-title">Medios y datos de pago</div><b>Medios:</b> ${esc(mediosPagoTexto())}<br><b>${esc(state.empresa.banco)}:</b> ${esc(state.empresa.tipoCuenta)} No. ${esc(state.empresa.cuenta)} &nbsp; <b>Condición:</b> ${esc(state.empresa.condicion)}</div>
     ${m.notas?`<div class="p-notes"><div class="pn-title">Observaciones</div>${esc(m.notas)}</div>`:""}
     <div class="p-signs">
-      <div class="p-sign-line">Elaboró — ${esc(m.tecnico||"Técnico responsable")}</div>
-      <div class="p-sign-line">Aceptado — Cliente</div>
+      <div>
+        <div class="p-sign-title">ELABORÓ — FIRMA DE QUIEN COTIZA</div>
+        <div class="p-sign-box">${state.firma&&state.firma.img?`<img src="${state.firma.img}" alt="Firma de quien elabora">`:""}</div>
+        <div class="p-sign-cap">Firma</div>
+        <div class="p-sign-name">${esc(m.tecnico||"Técnico responsable")}</div>
+        ${m.cargo?`<div class="p-sign-meta">${esc(m.cargo)}</div>`:""}
+        ${state.firma&&state.firma.momento?`<div class="p-sign-meta" style="color:#777">Firmado en pantalla: ${esc(sigFechaTxt(state.firma.momento))}</div>`:""}
+      </div>
+      <div>
+        <div class="p-sign-title">ACEPTADO — CLIENTE</div>
+        <div class="p-sign-box"></div>
+        <div class="p-sign-cap">Firma y sello</div>
+        <div class="p-sign-field">Nombre:<span></span></div>
+        <div class="p-sign-field">C.C. / NIT:<span></span></div>
+        <div class="p-sign-field">Fecha:<span></span></div>
+      </div>
     </div>
     <div class="p-foot">${esc(state.empresa.razon)} · NIT ${esc(state.empresa.nit)} · ${esc(state.empresa.celular)} · Valores en pesos colombianos (COP)</div>
   `;
 }
 
 /* ---------------- Arranque ---------------- */
+sigIniciar();
 loadState();
 syncMeta();
 syncEmpresa();
